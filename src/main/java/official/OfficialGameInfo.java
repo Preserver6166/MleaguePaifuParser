@@ -5,7 +5,8 @@ import lombok.Data;
 
 import java.util.List;
 
-import static official.App.PRO_NAME_BRIEF;
+import static official.ProInfo.PRO_INFO;
+
 
 @Builder
 @Data
@@ -53,9 +54,10 @@ public class OfficialGameInfo {
     public String getGameResult() {
         String pattern = "%s %spt; %s %spt; %s %spt; %s %spt";
         return String.format(pattern,
-                PRO_NAME_BRIEF.get(proNames[0]), proPoints[0],
-                PRO_NAME_BRIEF.get(proNames[1]), proPoints[1],
-                PRO_NAME_BRIEF.get(proNames[2]), proPoints[2],
-                PRO_NAME_BRIEF.get(proNames[3]), proPoints[3]);
+                PRO_INFO.get(proNames[0]), proPoints[0],
+                PRO_INFO.get(proNames[1]), proPoints[1],
+                PRO_INFO.get(proNames[2]), proPoints[2],
+                PRO_INFO.get(proNames[3]), proPoints[3]);
     }
+
 }

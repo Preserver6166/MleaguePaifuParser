@@ -2,27 +2,34 @@ package official;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import org.apache.commons.lang3.StringUtils;
 import tenhou.KyokuLog;
 import tenhou.TenhouPaifu;
 import tenhou.TenhouRule;
+import util.Majong;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static official.ProInfo.PRO_INFO;
 
 public class App {
 
-    /** 文本生成示例:
+    /** TODO
     2019/10/17 第1試合 佐々木寿人 vs 小林剛 vs 鈴木たろう vs 黒沢咲
     黒沢咲 +57.4pt; 小林剛 +16.9pt; 佐々木寿人 -25.3pt; 鈴木たろう -49.0pt
     官方牌谱：https://viewer.ml-log.jp/web/viewer?gameid=L001_S003_0011_01A
     天凤牌谱：
     */
 
-    public static final String FILENAME_PREFIX_18_22 = "/Users/Preserver6166/Documents/doc_official_18-22_data/";
-    public static final String FILENAME_PREFIX_22_23 = "/Users/Preserver6166/Documents/doc_official_22-23_data/";
+    public static final String FILENAME_PREFIX_18_22 = "/Users/junjunzhang/Documents/doc_official_18-22_data/";
+    public static final String FILENAME_PREFIX_22_23 = "/Users/junjunzhang/Documents/doc_official_22-23_data/";
 
     public static final String URL_PATTERN_2018_REGULAR = "L001_S001_00%s_0%dA";
     public static final String URL_PATTERN_2018_FINAL = "L001_S002_00%s_0%dA";
@@ -60,7 +67,7 @@ public class App {
             180, 24, 12,
             180, 24, 12,
             180, 24, 12,
-            188, 30, 0
+            188, 30, 16
     };
 
     public static final List<OfficialGameInfo> OFFICIAL_GAME_INFO_LIST = new ArrayList<>();
@@ -78,7 +85,7 @@ public class App {
     public static final String FAN_TSUMO_QIN_PATTERN = "%d符%d飜%d点∀";
     public static final String FAN_DETAIL_PATTERN = "%s(%d飜)";
 
-    public static final Map<String, Integer> PAI_NAME_MAPPING = new LinkedHashMap<>() {{
+    public static final Map<String, Integer> PAI_NAME_MAPPING_RAW = new LinkedHashMap<>() {{
         put("1m", 11); put("2m", 12); put("3m", 13);
         put("4m", 14); put("5m", 15); put("6m", 16);
         put("7m", 17); put("8m", 18); put("9m", 19);
@@ -93,7 +100,27 @@ public class App {
         put("5M", 51); put("5P", 52); put("5S", 53); // aka
     }};
 
-    // TODO 役种记录并不完全
+    public static final BiMap<String, Integer> PAI_NAME_MAPPING =
+            new ImmutableBiMap.Builder<String, Integer>().putAll(PAI_NAME_MAPPING_RAW).build();
+
+    public static final Map<Integer, Integer> DORA_INDICATOR_MAPPING = new LinkedHashMap<>() {{
+        put(11, 19); put(12, 11); put(13, 12);
+        put(14, 13); put(15, 14); put(16, 15);
+        put(17, 16); put(18, 17); put(19, 18);
+        put(51, 14);
+        put(21, 29); put(22, 21); put(23, 22);
+        put(24, 23); put(25, 24); put(26, 25);
+        put(27, 26); put(28, 27); put(29, 28);
+        put(52, 24);
+        put(31, 39); put(32, 31); put(33, 32);
+        put(34, 33); put(35, 34); put(36, 35);
+        put(37, 36); put(38, 37); put(39, 38);
+        put(53, 34);
+        put(41, 44); put(42, 41); put(43, 42); put(44, 43);
+        put(45, 47); put(46, 45); put(47, 46);
+    }};
+
+    // TODO 补充役种
     public static final Map<String, String> FAN_MAPPING = new LinkedHashMap<>() {{
         put("リーチ", "立直"); put("一発", "一発"); put("門前自摸", "門前清自摸和");
         put("平和", "平和"); put("一盃口", "一盃口"); put("タンヤオ", "断幺九");
@@ -111,26 +138,14 @@ public class App {
         put("清一色", "清一色");
         put("槍槓", "槍槓"); put("混老頭", "混老頭"); put("二盃口", "二盃口");
     }};
-  
-    // TODO 役种记录并不完全
+
     public static final Map<String, String> YAKUMAN_MAPPING = new LinkedHashMap<>() {{
         put("国士無双", "国士無双(役満)");
         put("大三元", "大三元(役満)");
         put("四暗刻", "四暗刻(役満)");
     }};
 
-    public static final Map<String, String> PRO_NAME_BRIEF = new LinkedHashMap<>() {{
-        put("園田賢", "園田"); put("堀慎吾", "堀"); put("小林剛", "小林"); put("村上淳", "村上");
-        put("沢崎誠", "沢崎"); put("白鳥翔", "白鳥"); put("藤崎智", "藤崎"); put("黒沢咲", "黒沢");
-        put("丸山奏子", "丸山"); put("前原雄大", "前原"); put("勝又健志", "勝又"); put("和久津晶", "和久津");
-        put("多井隆晴", "多井"); put("岡田紗佳", "岡田"); put("日向藍子", "日向"); put("朝倉康心", "朝倉");
-        put("本田朋広", "本田"); put("東城りお", "東城"); put("松本吉弘", "松本"); put("滝沢和典", "滝沢");
-        put("瑞原明奈", "瑞原"); put("石橋伸洋", "石橋"); put("茅森早香", "茅森"); put("萩原聖人", "萩原");
-        put("近藤誠一", "近藤"); put("高宮まり", "高宮"); put("魚谷侑未", "魚谷"); put("二階堂亜樹", "亜樹");
-        put("二階堂瑠美", "瑠美"); put("伊達朱里紗", "伊達"); put("佐々木寿人", "寿人"); put("内川幸太郎", "内川");
-        put("松ヶ瀬隆弥", "松ヶ瀬"); put("瀬戸熊直樹", "瀬戸熊"); put("鈴木たろう", "たろう"); put("渋川難波", "渋川");
-        put("鈴木優", "鈴木優"); put("仲林圭", "仲林");
-    }};
+
 
     static {
         try {
@@ -138,16 +153,15 @@ public class App {
             while(iterator.hasNext()) {
                 OfficialGameInfo.OfficialGameInfoBuilder officialGameInfoBuilder = iterator.next();
                 String fileName = officialGameInfoBuilder.build().getFileName();
-                // if (!fileName.equals("L001_S003_0001_01A")) {
-//                 if (!fileName.equals("L001_S013_0062_02A")) {
-//                     continue;
-//                 }
-                if (fileName.compareTo("L001_S014_0008_02A") <= 0) {
-                    continue;
-                }
-                if (fileName.compareTo("L001_S014_0013_01A") >= 0) {
-                    continue;
-                }
+//                if (!fileName.equals("L001_S013_0062_02A")) {
+//                    continue;
+//                }
+//                if (fileName.compareTo("L001_S003_0070_02A") <= 0) {
+//                    continue;
+//                }
+//                if (fileName.compareTo("L001_S001_0010_01A") >= 0) {
+//                    continue;
+//                }
                 assert fileName.length() == 18;
                 String fileNamePrefix = (fileName.contains("S013") || fileName.contains("S014") || fileName.contains("S015")) ?
                         FILENAME_PREFIX_22_23 : FILENAME_PREFIX_18_22;
@@ -172,7 +186,7 @@ public class App {
                         TenhouPaifu tenhouPaifu = o2t(gameInfo);
                         TENHOU_PAIFU_MAP.put(fileName, tenhouPaifu);
 //                        System.out.println(fileName + "\t" + tenhouPaifu.getLog().size());
-                        printGame(fileName, gameInfo, tenhouPaifu);
+//                        printGame(fileName, gameInfo, tenhouPaifu);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -196,20 +210,20 @@ public class App {
         String naga2 = "/** 一致率：%s 70.0%%; %s 70.0%%; %s 70.0%%; %s 70.0%% */";
         String naga3 = "/** 恶手率：%s 5.0%%; %s 5.0%%; %s 5.0%%; %s 5.0%% */";
         System.out.println(String.format(naga1,
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[0]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[1]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[2]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[3])));
+                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief()));
         System.out.println(String.format(naga2,
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[0]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[1]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[2]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[3])));
+                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief()));
         System.out.println(String.format(naga3,
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[0]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[1]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[2]),
-                PRO_NAME_BRIEF.get(gameInfo.getProNames()[3])));
+                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief()));
         System.out.println("/** NAGA牌谱及分析详情：");
         System.out.println("https://naga.dmv.nico/htmls/053227e0e24c174441bd302c0f0f1680063eadbc24d0888148191b2f1673b517v2_2_2.html?tw=0");
         System.out.println("*/");
@@ -232,7 +246,18 @@ public class App {
     public static void main (String[] args) throws Exception {
         // fun19();
         // fun20();
+        fun21();
         // System.out.println(TENHOU_PAIFU_MAP.get("L001_S003_0001_02A").toString());
+    }
+
+    private static void fun21() {
+        for(ProInfo proInfo: PRO_INFO.values()) {
+            Double avgShanten = new BigDecimal(Double.valueOf(proInfo.getHaipaiShanten()) / proInfo.getKyokuCount())
+                    .setScale(3, RoundingMode.HALF_UP).doubleValue();
+            Double avgDora = new BigDecimal(Double.valueOf(proInfo.getHaipaiDoraCount()) / proInfo.getKyokuCount())
+                    .setScale(3, RoundingMode.HALF_UP).doubleValue();
+            System.out.println(proInfo.getProNameBrief() + "\t" + avgShanten + "\t" + avgDora + "\t" + proInfo.getKyokuCount());
+        }
     }
 
     private static void fun20() {
@@ -328,6 +353,12 @@ public class App {
         List<String> kyokuBriefList = new ArrayList<>();
         tenhouPaifuBuilder.kyokuBrief(kyokuBriefList);
 
+//        Map<String, List<Integer>> haipaiShantenInfo = new HashMap<>();
+//        tenhouPaifuBuilder.haipaiShantenInfo(haipaiShantenInfo);
+//
+//        Map<String, List<Integer>> haipaiDoraInfo = new HashMap<>();
+//        tenhouPaifuBuilder.haipaiDoraInfo(haipaiDoraInfo);
+
         KyokuLog kyokuLog = null;
 
         List<OfficialPaifuLog> officialPaifuLogList = gameInfo.getOfficialPaifuLogList();
@@ -401,7 +432,7 @@ public class App {
                 if (PAI_NAME_MAPPING.get(args[2]) == null) {
                     String kyokuStartInfo = kyokuLog.getKyokuStartInfoInStringFormat();
                     System.out.println(gameInfo.getFileName() + " " + kyokuStartInfo + " 漏记" +
-                            PRO_NAME_BRIEF.get(gameInfo.getProNames()[proIndex]) + "摸牌" +
+                            PRO_INFO.get(gameInfo.getProNames()[proIndex]).getProNameBrief() + "摸牌" +
                             " ID:" + officialPaifuLog.getId());
                 } else {
                     int paiName = PAI_NAME_MAPPING.get(args[2]);
@@ -416,7 +447,7 @@ public class App {
                 if (PAI_NAME_MAPPING.get(args[1]) == null) {
                     String kyokuStartInfo = kyokuLog.getKyokuStartInfoInStringFormat();
                     System.out.println(gameInfo.getFileName() + " " + kyokuStartInfo + " 漏记" +
-                            PRO_NAME_BRIEF.get(gameInfo.getProNames()[proIndex]) + "出牌" +
+                            PRO_INFO.get(gameInfo.getProNames()[proIndex]).getProNameBrief() + "出牌" +
                             " ID:" + officialPaifuLog.getId());
                 } else {
                     int paiName = PAI_NAME_MAPPING.get(args[1]);
@@ -530,7 +561,7 @@ public class App {
                             kyokuLog.appendSutehaiInfo(proIndex, kanRecord);
                             lastSutehaiProIndex = proIndex;
                         } else {
-                            System.out.println(gameInfo.getFileName());
+                            // System.out.println(gameInfo.getFileName());
                             // 明杠之后, 要在sutehai里加个0
                             int sourcePaiName1 = PAI_NAME_MAPPING.get(args[1].substring(1, 3));
                             int sourcePaiName2 = PAI_NAME_MAPPING.get(args[1].substring(3, 5));
@@ -676,6 +707,27 @@ public class App {
                 tenPaiProNumInfo[2] = false;
                 tenPaiProNumInfo[3] = false;
                 kyokuBriefList.add(kyokuLog.getKyokuBrief());
+
+                for (int i=0; i<kyokuLog.getHaipaiInfo().length; i++) {
+                    List<String> haipaiInfo = Arrays.stream(kyokuLog.getHaipaiInfo()[i]).mapToObj(
+                            haipai -> PAI_NAME_MAPPING.inverse().get(haipai)).collect(Collectors.toList());
+                    List<Integer> hais = Majong.convertHais(haipaiInfo);
+                    int minShanten = Math.min(Majong.kokushiCheck(Majong.HAIPAI, hais),
+                            Math.min(Majong.chitoiCheck(Majong.HAIPAI, hais), Majong.mentshCheck(Majong.HAIPAI, hais)));
+                    int akaCount = Long.valueOf(haipaiInfo.stream().filter(haipai ->
+                            haipai.contains("M") || haipai.contains("P") || haipai.contains("S")).count()).intValue();
+                    final int doraIndicator = kyokuLog.getDoraInfo().get(0);
+                    int doraCount = Long.valueOf(haipaiInfo.stream().filter(haipai ->
+                            DORA_INDICATOR_MAPPING.get(PAI_NAME_MAPPING.get(haipai).intValue()) == doraIndicator).count()).intValue();
+                    PRO_INFO.get(gameInfo.getProNames()[i]).addKyokuCount();
+                    PRO_INFO.get(gameInfo.getProNames()[i]).addHaipaiShanten(minShanten);
+                    PRO_INFO.get(gameInfo.getProNames()[i]).addHaipaiDoraCount(akaCount + doraCount);
+//                    System.out.println("doraIndicator:" + PAI_NAME_MAPPING.inverse().get(doraIndicator));
+//                    System.out.println(String.join("", haipaiInfo));
+//                    System.out.println("shanten:" + minShanten);
+//                    System.out.println("doraCount:" + (akaCount + doraCount));
+//                    System.out.println("++++++");
+                }
                 // System.out.println("++++++++");
                 // System.out.println(JSONObject.toJSONString(log));
             }
@@ -943,9 +995,9 @@ public class App {
                     kyokuStartInfo[0]%4 + 1,
                     kyokuStartInfo[1],
                     kyokuStartInfo[2] * 1000,
-                    PRO_NAME_BRIEF.get(proNames[proIndex]),
+                    PRO_INFO.get(proNames[proIndex]).getProNameBrief(),
                     point,
-                    PRO_NAME_BRIEF.get(proNames[lastSutehaiProIndex]));
+                    PRO_INFO.get(proNames[lastSutehaiProIndex]).getProNameBrief());
             return kyokuBrief;
         } else if (isQin) {
             String kyokuBriefTsumoPattern = "/** %s%d局%d本场 供托%d点 %s %dall */";
@@ -954,7 +1006,7 @@ public class App {
                     kyokuStartInfo[0] % 4 + 1,
                     kyokuStartInfo[1],
                     kyokuStartInfo[2] * 1000,
-                    PRO_NAME_BRIEF.get(proNames[proIndex]),
+                    PRO_INFO.get(proNames[proIndex]).getProNameBrief(),
                     (int) (Math.ceil(Double.valueOf(point) / 300) * 100));
             return kyokuBrief;
         } else {
@@ -964,7 +1016,7 @@ public class App {
                     kyokuStartInfo[0] % 4 + 1,
                     kyokuStartInfo[1],
                     kyokuStartInfo[2] * 1000,
-                    PRO_NAME_BRIEF.get(proNames[proIndex]),
+                    PRO_INFO.get(proNames[proIndex]).getProNameBrief(),
                     (int) (Math.ceil(Double.valueOf(point) / 400) * 100),
                     (int) (Math.ceil(Double.valueOf(point) / 200) * 100));
             return kyokuBrief;
@@ -997,7 +1049,7 @@ public class App {
             List<String> tenPaiProNameList = new ArrayList<>();
             for (int i = 0; i < tenPaiProNumInfo.length; i++) {
                 if (tenPaiProNumInfo[i]) {
-                    tenPaiProNameList.add(PRO_NAME_BRIEF.get(proNames[i]));
+                    tenPaiProNameList.add(PRO_INFO.get(proNames[i]).getProNameBrief());
                 }
             }
             String kyokuBrief = String.format(kyokuBriefRyukyokuPattern,
@@ -1075,3 +1127,5 @@ public class App {
         }
     }
 }
+
+

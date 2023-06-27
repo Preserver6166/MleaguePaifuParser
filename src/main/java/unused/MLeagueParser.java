@@ -12,6 +12,8 @@ import com.alibaba.fastjson.JSONObject;
 
 public class MLeagueParser {
 
+    public static final String PATH = System.getProperty("user.home");
+
     private static final String[] PRO_NAMES = {
             "多井", "泷沢", "寿人", "傻饼", "近藤",
             "贤王", "黑沢", "总帅", "塔罗", "少爷",
@@ -83,7 +85,7 @@ public class MLeagueParser {
 
     static {
         try {
-            Scanner scanner = new Scanner(new File("/Users/junjunzhang/Documents/pro_pro"));
+            Scanner scanner = new Scanner(new File(PATH + "/Documents/立直麻将/pro_pro"));
             while(scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 int pro1 = Integer.parseInt(line.substring(1, line.indexOf("]")));

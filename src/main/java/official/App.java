@@ -22,14 +22,15 @@ import static official.ProInfo.PRO_INFO;
 public class App {
 
     /** TODO
-    2019/10/17 第1試合 佐々木寿人 vs 小林剛 vs 鈴木たろう vs 黒沢咲
-    黒沢咲 +57.4pt; 小林剛 +16.9pt; 佐々木寿人 -25.3pt; 鈴木たろう -49.0pt
-    官方牌谱：https://viewer.ml-log.jp/web/viewer?gameid=L001_S003_0011_01A
-    天凤牌谱：
-    */
+     2019/10/17 第1試合 佐々木寿人 vs 小林剛 vs 鈴木たろう vs 黒沢咲
+     黒沢咲 +57.4pt; 小林剛 +16.9pt; 佐々木寿人 -25.3pt; 鈴木たろう -49.0pt
+     官方牌谱：https://viewer.ml-log.jp/web/viewer?gameid=L001_S003_0011_01A
+     天凤牌谱：
+     */
+    public static final String PATH = System.getProperty("user.home");
 
-    public static final String FILENAME_PREFIX_18_22 = "/Users/junjunzhang/Documents/doc_official_18-22_data/";
-    public static final String FILENAME_PREFIX_22_23 = "/Users/junjunzhang/Documents/doc_official_22-23_data/";
+    public static final String FILENAME_PREFIX_18_22 = PATH + "/Documents/立直麻将/doc_official_18-22_data/";
+    public static final String FILENAME_PREFIX_22_23 = PATH + "/Documents/Documents/doc_official_22-23_data/";
 
     public static final String URL_PATTERN_2018_REGULAR = "L001_S001_00%s_0%dA";
     public static final String URL_PATTERN_2018_FINAL = "L001_S002_00%s_0%dA";
@@ -191,7 +192,7 @@ public class App {
                         ex.printStackTrace();
                     }
                 } else {
-                    System.out.println(fileName + "does not exist");
+                    System.out.println(fileName + " does not exist");
                 }
             }
 
@@ -291,43 +292,43 @@ public class App {
     /**
      * 把官方牌谱转换成天凤再生牌谱
      {
-        "title":[
-            "Mリーグ2019　ファイナルシリーズ 6/23(火)",
-            "第2試合"
-        ],
-        "name":[
-            "沢崎-228.2",
-            "多井+127.9",
-            "魚谷+175.5",
-            "小林+183.5"
-        ],
-        "rule":{
-            "disp":"Mリーグ2019　FINAL 12/12　6/23 第2試合",
-            "aka":1
-        },
-        "log":[
-            [
-                [1,0,0],[25000,28900,21100,25000], // 1代表東2局, 0代表0本场, 0代表供托
-                [24],[31], // 宝牌指示牌, 里宝牌指示牌
-                [11,12,15,19,24,29,32,53,41,42,43,44,47], // 本局庄家起手牌
-                [12,46,43,25,37,35,22,33,41,18,32,17,14,25,38], // 本局庄家摸的牌
-                [32,15,12,12,11,19,41,60,43,35,29,32,43,47,42], // 本局庄家出的牌
-                [13,13,14,18,19,27,27,28,31,36,36,39,45],
-                [37,47,31,27,38,25,37,19,15,36,29,26,21,23,34,51],
-                [31,60,60,45,14,13,13,39,60,28,60,18,60,60,19,19],
-                [11,13,14,17,23,27,28,28,33,42,42,46,47],
-                [24,46,34,37,34,36,26,21,22,18,11,32,23,38,43,12],
-                [46,60,11,17,47,42,28,33,21,60,60,60,60,"r42",60],
-                [11,14,15,16,18,21,28,33,35,39,45,46,47],
-                [44,24,17,21,39,43,41,16,12,32,42,19,45,26,22],
-                [21,39,45,60,60,44,60,46,28,35,60,43,16,47,45],
-                [
-                    "和了",
-                    [-1300,-2600,6200,-1300],
-                    [2,2,2,"20符4飜1300-2600点","立直(1飜)","門前清自摸和(1飜)","断幺九(1飜)","平和(1飜)"]
-                ]
-            ]
-        ]
+     "title":[
+     "Mリーグ2019　ファイナルシリーズ 6/23(火)",
+     "第2試合"
+     ],
+     "name":[
+     "沢崎-228.2",
+     "多井+127.9",
+     "魚谷+175.5",
+     "小林+183.5"
+     ],
+     "rule":{
+     "disp":"Mリーグ2019　FINAL 12/12　6/23 第2試合",
+     "aka":1
+     },
+     "log":[
+     [
+     [1,0,0],[25000,28900,21100,25000], // 1代表東2局, 0代表0本场, 0代表供托
+     [24],[31], // 宝牌指示牌, 里宝牌指示牌
+     [11,12,15,19,24,29,32,53,41,42,43,44,47], // 本局庄家起手牌
+     [12,46,43,25,37,35,22,33,41,18,32,17,14,25,38], // 本局庄家摸的牌
+     [32,15,12,12,11,19,41,60,43,35,29,32,43,47,42], // 本局庄家出的牌
+     [13,13,14,18,19,27,27,28,31,36,36,39,45],
+     [37,47,31,27,38,25,37,19,15,36,29,26,21,23,34,51],
+     [31,60,60,45,14,13,13,39,60,28,60,18,60,60,19,19],
+     [11,13,14,17,23,27,28,28,33,42,42,46,47],
+     [24,46,34,37,34,36,26,21,22,18,11,32,23,38,43,12],
+     [46,60,11,17,47,42,28,33,21,60,60,60,60,"r42",60],
+     [11,14,15,16,18,21,28,33,35,39,45,46,47],
+     [44,24,17,21,39,43,41,16,12,32,42,19,45,26,22],
+     [21,39,45,60,60,44,60,46,28,35,60,43,16,47,45],
+     [
+     "和了",
+     [-1300,-2600,6200,-1300],
+     [2,2,2,"20符4飜1300-2600点","立直(1飜)","門前清自摸和(1飜)","断幺九(1飜)","平和(1飜)"]
+     ]
+     ]
+     ]
      }
      */
     public static TenhouPaifu o2t(OfficialGameInfo gameInfo) throws Exception {
@@ -783,26 +784,26 @@ public class App {
         String pattern19_1 = "%s\t%s\t%s\t%d\t%d";
         Arrays.stream(proNamesInOrder).forEach(proName -> {
             System.out.println(
-                String.format(pattern19_1,
-                    proName,
-                    proName_firstGameDate.get(proName).getGameName(),
-                    proName_firstRank0Date.get(proName).getGameName(),
-                    proName_interval.get(proName),
-                    proName_gameNum.get(proName)
-                )
+                    String.format(pattern19_1,
+                            proName,
+                            proName_firstGameDate.get(proName).getGameName(),
+                            proName_firstRank0Date.get(proName).getGameName(),
+                            proName_interval.get(proName),
+                            proName_gameNum.get(proName)
+                    )
             );
         });
 
         String pattern19_2 = "%s\n%s\n%s\n%d个\n%d分钟";
         Arrays.stream(proNamesInOrder).forEach(proName -> {
             System.out.println(
-                String.format(pattern19_2,
-                    proName,
-                    proName_firstGameDate.get(proName).getGameName(),
-                    proName_firstRank0Date.get(proName).getGameName(),
-                    proName_gameNum.get(proName),
-                    proName_interval.get(proName)
-                )
+                    String.format(pattern19_2,
+                            proName,
+                            proName_firstGameDate.get(proName).getGameName(),
+                            proName_firstRank0Date.get(proName).getGameName(),
+                            proName_gameNum.get(proName),
+                            proName_interval.get(proName)
+                    )
             );
         });
     }
@@ -813,7 +814,7 @@ public class App {
      */
     public static void generatePaifuUrl() throws Exception {
 
-        PrintWriter pw = new PrintWriter(new File("/Users/junjunzhang/Documents/official_urls.txt"));
+        PrintWriter pw = new PrintWriter(new File(PATH + "/Documents/立直麻将/official_urls.txt"));
 
         for (int i = 0; i < SEASONS.length; i++) {
             String season = SEASONS[i];
@@ -1127,5 +1128,4 @@ public class App {
         }
     }
 }
-
 

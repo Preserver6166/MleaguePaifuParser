@@ -27,8 +27,8 @@ public class PaipuParser {
     }
 
     public static void parse_20_21() throws Exception {
-        Scanner scanner = new Scanner(new File(PATH + "/Documents/立直麻将/mleague_20-21_v2.txt"));
-        PrintWriter pw = new PrintWriter(new File(PATH + "/Documents/立直麻将/mleague_20-21_v3.txt"));
+        Scanner scanner = new Scanner(new File(PATH + "/Documents/Mleague数据/mleague_20-21_v2.txt"));
+        PrintWriter pw = new PrintWriter(new File(PATH + "/Documents/Mleague数据/mleague_20-21_v3.txt"));
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if (line.contains("<title>")) {
@@ -72,8 +72,8 @@ public class PaipuParser {
 
     public static void parse_19_20() throws Exception {
 
-        Scanner scanner = new Scanner(new File(PATH + "/Documents/立直麻将/mleague4.txt"));
-        PrintWriter pw = new PrintWriter(new File(PATH + "/Documents/立直麻将/mleague5.txt"));
+        Scanner scanner = new Scanner(new File(PATH + "/Documents/Mleague数据/mleague4.txt"));
+        PrintWriter pw = new PrintWriter(new File(PATH + "/Documents/Mleague数据/mleague5.txt"));
         Stack<String> stack = new Stack<>();
         List<String> results = new ArrayList<>();
         while(scanner.hasNextLine()) {

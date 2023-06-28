@@ -85,7 +85,7 @@ public class MLeagueParser {
 
     static {
         try {
-            Scanner scanner = new Scanner(new File(PATH + "/Documents/立直麻将/pro_pro"));
+            Scanner scanner = new Scanner(new File(PATH + "/Documents/Mleague数据/pro_pro"));
             while(scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 int pro1 = Integer.parseInt(line.substring(1, line.indexOf("]")));

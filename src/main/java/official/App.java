@@ -29,8 +29,8 @@ public class App {
      */
     public static final String PATH = System.getProperty("user.home");
 
-    public static final String FILENAME_PREFIX_18_22 = PATH + "/Documents/立直麻将/doc_official_18-22_data/";
-    public static final String FILENAME_PREFIX_22_23 = PATH + "/Documents/Documents/doc_official_22-23_data/";
+    public static final String FILENAME_PREFIX_18_22 = PATH + "/Documents/Mleague数据/doc_official_18-22_data/";
+    public static final String FILENAME_PREFIX_22_23 = PATH + "/Documents/Mleague数据/doc_official_22-23_data/";
 
     public static final String URL_PATTERN_2018_REGULAR = "L001_S001_00%s_0%dA";
     public static final String URL_PATTERN_2018_FINAL = "L001_S002_00%s_0%dA";
@@ -145,8 +145,6 @@ public class App {
         put("大三元", "大三元(役満)");
         put("四暗刻", "四暗刻(役満)");
     }};
-
-
 
     static {
         try {
@@ -814,7 +812,7 @@ public class App {
      */
     public static void generatePaifuUrl() throws Exception {
 
-        PrintWriter pw = new PrintWriter(new File(PATH + "/Documents/立直麻将/official_urls.txt"));
+        PrintWriter pw = new PrintWriter(new File(PATH + "/Documents/Mleague数据/official_urls.txt"));
 
         for (int i = 0; i < SEASONS.length; i++) {
             String season = SEASONS[i];

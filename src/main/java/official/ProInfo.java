@@ -46,6 +46,14 @@ public class ProInfo {
         put("渋川難波", new ProInfo("渋川難波", "渋川"));
         put("鈴木優", new ProInfo("鈴木優", "鈴木優"));
         put("仲林圭", new ProInfo("仲林圭", "仲林"));
+        put("猿川真寿", new ProInfo("猿川真寿", "猿川"));
+        put("菅原千瑛", new ProInfo("菅原千瑛", "菅原"));
+        put("鈴木大介", new ProInfo("鈴木大介", "大介"));
+        put("中田花奈", new ProInfo("中田花奈", "中田"));
+        put("醍醐大", new ProInfo("醍醐大", "醍醐"));
+        put("浅見真紀", new ProInfo("浅見真紀", "浅見"));
+        put("渡辺太", new ProInfo("渡辺太", "渡辺"));
+
     }};
 
     private String proName;

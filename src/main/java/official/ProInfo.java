@@ -3,10 +3,12 @@ package official;
 import lombok.Data;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
 public class ProInfo {
+
     public static final Map<String, ProInfo> PRO_INFO = new LinkedHashMap<>() {{
         put("園田賢", new ProInfo("園田賢", "園田"));
         put("堀慎吾", new ProInfo("堀慎吾", "堀"));
@@ -53,26 +55,33 @@ public class ProInfo {
         put("醍醐大", new ProInfo("醍醐大", "醍醐"));
         put("浅見真紀", new ProInfo("浅見真紀", "浅見"));
         put("渡辺太", new ProInfo("渡辺太", "渡辺"));
-
     }};
 
-    private String proName;
-    private String proNameBrief;
+    private String proName; // 全名
+    private String proNameBrief; // 简称
 
-    private int kyokuCount;
-    private int haipaiDoraCount;
-    private int haipaiShanten;
+    private int gameCount; // 半庄数
+    private int kyokuCount; // 对局数（不是半庄数）
+    private int haipaiDoraCount; // 配牌dora数（宝牌+赤宝牌）
+    private int haipaiShanten; // 配牌向听数
+    private int midTenpaiKyokuCount; // 局中至少听牌一次的对局数
+    private int midTenpaiRoundCount; // 局中第一次听牌时的巡目X
+
+    private StringBuilder richiAgariUraInfo = new StringBuilder();
 
     public ProInfo(String proName, String proNameBrief) {
         this.proName = proName;
         this.proNameBrief = proNameBrief;
+        this.gameCount = 0;
         this.kyokuCount = 0;
         this.haipaiDoraCount = 0;
         this.haipaiShanten = 0;
     }
 
-    public void addKyokuCount() {
-        this.kyokuCount ++;
+    public void addGameCount() { this.gameCount ++; }
+
+    public void addKyokuCount(int kyokuCount) {
+        this.kyokuCount += kyokuCount;
     }
 
     public void addHaipaiDoraCount(int haipaiDoraCount) {
@@ -82,4 +91,18 @@ public class ProInfo {
     public void addHaipaiShanten(int haipaiShanten) {
         this.haipaiShanten += haipaiShanten;
     }
+
+    public void appendRichiAgariResult(int result) {
+       this.richiAgariUraInfo.append(result);
+    }
+
+    public static String getProNameByBrief(String proNameBrief) {
+        for (ProInfo proInfo: PRO_INFO.values()) {
+            if (proInfo.getProNameBrief().equals(proNameBrief)) {
+                return proInfo.getProName();
+            }
+        }
+        return null; // should not go into here
+    }
+
 }

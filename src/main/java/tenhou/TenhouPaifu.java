@@ -1,6 +1,7 @@
 package tenhou;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,10 @@ public class TenhouPaifu {
     private TenhouRule rule;
 
     @JSONField(ordinal = 4)
-    private List<List<Object>> log;
+    private List<KyokuLog> log;
+
+    @JSONField(serialize = false)
+    private String fileName;
 
     @JSONField(serialize=false)
     private List<String> kyokuBrief;

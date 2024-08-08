@@ -3,6 +3,7 @@ package official;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static official.ProInfo.PRO_INFO;
@@ -35,7 +36,7 @@ public class OfficialGameInfo {
      * 比赛结果象限信息
      */
     private String[] proNames;
-    private String[] proPoints; // 成绩
+    private BigDecimal[] proPoints; // 成绩
     private int[] proRanks; // 顺位
 
     // other info
@@ -54,10 +55,10 @@ public class OfficialGameInfo {
     public String getGameResult() {
         String pattern = "%s %spt; %s %spt; %s %spt; %s %spt";
         return String.format(pattern,
-                PRO_INFO.get(proNames[0]), proPoints[0],
-                PRO_INFO.get(proNames[1]), proPoints[1],
-                PRO_INFO.get(proNames[2]), proPoints[2],
-                PRO_INFO.get(proNames[3]), proPoints[3]);
+                PRO_INFO.get(proNames[0]).getProNameBrief(), proPoints[0],
+                PRO_INFO.get(proNames[1]).getProNameBrief(), proPoints[1],
+                PRO_INFO.get(proNames[2]).getProNameBrief(), proPoints[2],
+                PRO_INFO.get(proNames[3]).getProNameBrief(), proPoints[3]);
     }
 
 }

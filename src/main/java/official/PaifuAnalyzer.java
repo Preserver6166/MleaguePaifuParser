@@ -2,7 +2,6 @@ package official;
 
 import mahjongutils.models.Tile;
 import mahjongutils.shanten.*;
-import org.checkerframework.checker.units.qual.A;
 import tenhou.KyokuLog;
 import tenhou.TenhouPaifu;
 import util.Majong;

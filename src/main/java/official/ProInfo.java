@@ -55,6 +55,8 @@ public class ProInfo {
         put("醍醐大", new ProInfo("醍醐大", "醍醐"));
         put("浅見真紀", new ProInfo("浅見真紀", "浅見"));
         put("渡辺太", new ProInfo("渡辺太", "渡辺"));
+        put("竹内元太", new ProInfo("竹内元太", "竹内"));
+        put("浅井堂岐", new ProInfo("浅井堂岐", "堂岐"));
     }};
 
     private String proName; // 全名

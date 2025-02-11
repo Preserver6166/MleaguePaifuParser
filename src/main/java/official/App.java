@@ -31,24 +31,21 @@ public class App {
             while(iterator.hasNext()) {
                 OfficialGameInfo.OfficialGameInfoBuilder officialGameInfoBuilder = iterator.next();
                 String fileName = officialGameInfoBuilder.build().getFileName();
-//                if (!fileName.equals("L001_S007_0022_02A")) {
+//                if (!fileName.equals("L001_S016_0039_02A")) {
 //                    continue;
 //                }
+                if (fileName.compareTo("L001_S019_0081_01A") < 0) {
+                    continue;
+                }
+                if (fileName.compareTo("L001_S019_0081_02A") > 0) {
+                    continue;
+                }
 //                if (fileName.compareTo("L001_S001_0001_01A") < 0) {
 //                    continue;
 //                }
-//                if (fileName.compareTo("L001_S007_0021_01A") < 0) {
+//                if (fileName.compareTo("L001_S019_0025_02A") > 0) {
 //                    continue;
 //                }
-//                if (fileName.compareTo("L001_S007_0030_02A") > 0) {
-//                    continue;
-//                }
-                if (fileName.compareTo("L001_S001_0041_01A") < 0) {
-                    continue;
-                }
-                if (fileName.compareTo("L001_S001_0050_02A") > 0) {
-                    continue;
-                }
                 assert fileName.length() == 18;
                 String fileNamePrefix;
 //                if ((fileName.contains("S013") || fileName.contains("S014") || fileName.contains("S015"))) {
@@ -83,6 +80,9 @@ public class App {
                     try {
                         TenhouPaifu tenhouPaifu = o2t(gameInfo);
                         validateTenhouPaifu(tenhouPaifu);
+//                        if (tenhouPaifu.getLog().size() == 8) {
+//                            System.out.println("+++++" + fileName);
+//                        }
                         TENHOU_PAIFU_MAP.put(fileName, tenhouPaifu);
                         // TODO 所有对PRO_INFO进行的统计操作后续整合到一起去
                         int kyokuCount = tenhouPaifu.getLog().size();
@@ -129,24 +129,18 @@ public class App {
         System.out.println(gameInfo.getGameBrief());
         System.out.println(gameInfo.getGameResult());
         System.out.println();
-        System.out.println(String.format(NAGA_PATTERN_1,
-                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief()));
-        System.out.println(String.format(NAGA_PATTERN_2,
-                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief()));
-        System.out.println(String.format(NAGA_PATTERN_3,
-                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief(),
-                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief()));
         System.out.println("/** NAGA牌谱及分析详情：");
         System.out.println("https://naga.dmv.nico/htmls/053227e0e24c174441bd302c0f0f1680063eadbc24d0888148191b2f1673b517v2_2_2.html?tw=0");
-        System.out.println("*/\n");
+        System.out.println("*/");
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief()));
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief()));
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief()));
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief()));
+        System.out.println();
         System.out.println("/** 官方牌谱：");
         System.out.println("https://viewer.ml-log.jp/web/viewer?gameid=" + fileName);
         System.out.println("*/\n");
@@ -248,6 +242,7 @@ public class App {
         tenhouPaifuBuilder.kyokuBrief(kyokuBriefList);
 
         KyokuLog kyokuLog = null;
+        KyokuLog lastKyokuLog = null;
 
         List<OfficialPaifuLog> officialPaifuLogList = gameInfo.getOfficialPaifuLogList();
         Iterator<OfficialPaifuLog> iterator = officialPaifuLogList.iterator();
@@ -268,7 +263,14 @@ public class App {
             if (cmd.equals("kyokustart")) {
                 // 亲家是B0, 场风是2z, 各家的自风
                 // ["0", "B0", "0", "0", "2z", "4z", "1z", "2z", "3z"]
+                lastKyokuLog = kyokuLog;
                 kyokuLog = new KyokuLog();
+//                if (lastKyokuLog != null) {
+//                    for (int i = 0; i <= 3; i++) {
+//                        kyokuLog.setKyokuStartPointInfo(i,
+//                                lastKyokuLog.getKyokuStartPointInfo()[i] + lastKyokuLog.getKyokuEndPointInfo()[i]);
+//                    }
+//                }
                 assert args.length == 9;
                 int kyokuIndex = calculateKyokuIndex(args[4], args[5]);
                 kyokuLog.setKyokuStartInfo(
@@ -280,6 +282,10 @@ public class App {
                 int proIndex = args[0].charAt(0) - 65;
                 if (args[1].startsWith("=")) {
                     int pointValue = Integer.valueOf(args[1].substring(1));
+//                    if (pointValue != kyokuLog.getKyokuStartPointInfo()[proIndex]) {
+//                        System.out.println("Expected: " + pointValue +
+//                                ", but got: " + kyokuLog.getKyokuStartPointInfo()[proIndex]);
+//                    }
                     kyokuLog.setKyokuStartPointInfo(proIndex, pointValue);
                 } else if (args[1].startsWith("+") || args[1].startsWith("-")) {
                     int pointValue = Integer.valueOf(args[1]);
@@ -287,6 +293,7 @@ public class App {
                 } else {
                     // should not go into here
                 }
+
             }
 
             if (cmd.equals("dora")) {
@@ -410,6 +417,7 @@ public class App {
                 // do nothing
                 int proIndex = args[0].charAt(0) - 65;
                 kyokuLog.appendKyokuEndPointInfo(proIndex, 1000);
+                // TODO 此处要加立直数组
             }
 
             if (cmd.equals("open")) {
@@ -607,7 +615,8 @@ public class App {
                     } else if (kyokuEndPointInfo[0] == -1000 && kyokuEndPointInfo[1] == -1000 &&
                             kyokuEndPointInfo[2] == -1000 && kyokuEndPointInfo[3] == 3000) {
                     } else {
-                        throw new Exception(gameInfo.getFileName());
+                        String kyokuStartInfo = kyokuLog.getKyokuStartInfoInStringFormat();
+                        System.out.println(gameInfo.getFileName() + " " + kyokuStartInfo + " 流局收支不正确");
                     }
                 }
                 log.add(kyokuLog);
@@ -712,18 +721,21 @@ public class App {
         int startIndex = line.indexOf(TIME_START_SIGNAL);
         int endIndex = line.indexOf(TIME_END_SIGNAL, startIndex);
         String timeString = line.substring(startIndex + TIME_START_SIGNAL.length(), endIndex);
-        assert timeString.length() == TIME_STRING_DEMO.length();
-        String gameDate = timeString.substring(0, 10);
-        String gameWeekDay = timeString.substring(12, 13);
-        String startTimeString = timeString.substring(15, 20);
-        String endTimeString = timeString.substring(23, 28);
-        int interval = calculateInterval(startTimeString, endTimeString);
+        if (timeString.length() == TIME_STRING_DEMO.length()) {
+            String gameDate = timeString.substring(0, 10);
+            String gameWeekDay = timeString.substring(12, 13);
+            String startTimeString = timeString.substring(15, 20);
+            String endTimeString = timeString.substring(23, 28);
+            int interval = calculateInterval(startTimeString, endTimeString);
 
-        builder.gameDate(gameDate);
-        builder.gameWeekDay(gameWeekDay);
-        builder.startTime(startTimeString);
-        builder.endTime(endTimeString);
-        builder.interval(interval);
+            builder.gameDate(gameDate);
+            builder.gameWeekDay(gameWeekDay);
+            builder.startTime(startTimeString);
+            builder.endTime(endTimeString);
+            builder.interval(interval);
+        } else { // 偶有漏记比赛时间的情况出现，警告即可，不应当影响牌谱解析
+            System.out.println(builder.build().getFileName() + " 漏记比赛时间");
+        }
     }
 
     private static int calculateInterval(String startTimeString, String endTimeString) {

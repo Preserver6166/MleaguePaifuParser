@@ -37,6 +37,9 @@ public class Constants {
     public static final String URL_PATTERN_2023_REGULAR = "L001_S016_%s_0%dA";
     public static final String URL_PATTERN_2023_SEMI = "L001_S017_%s_0%dA";
     public static final String URL_PATTERN_2023_FINAL = "L001_S018_%s_0%dA";
+    public static final String URL_PATTERN_2024_REGULAR = "L001_S019_%s_0%dA";
+    public static final String URL_PATTERN_2024_SEMI = "L001_S020_%s_0%dA";
+    public static final String URL_PATTERN_2024_FINAL = "L001_S021_%s_0%dA";
 
     /**
      * SEASONS 赛季顺序
@@ -49,7 +52,8 @@ public class Constants {
             URL_PATTERN_2020_REGULAR, URL_PATTERN_2020_SEMI, URL_PATTERN_2020_FINAL,
             URL_PATTERN_2021_REGULAR, URL_PATTERN_2021_SEMI, URL_PATTERN_2021_FINAL,
             URL_PATTERN_2022_REGULAR, URL_PATTERN_2022_SEMI, URL_PATTERN_2022_FINAL,
-            URL_PATTERN_2023_REGULAR, URL_PATTERN_2023_SEMI, URL_PATTERN_2023_FINAL
+            URL_PATTERN_2023_REGULAR, URL_PATTERN_2023_SEMI, URL_PATTERN_2023_FINAL,
+            URL_PATTERN_2024_REGULAR, URL_PATTERN_2024_SEMI, URL_PATTERN_2024_FINAL
     };
 
     public static final String[] SEASON_NAMES = {
@@ -59,6 +63,7 @@ public class Constants {
             "21-22赛季 常规赛", "21-22赛季 半决赛", "21-22赛季 决赛",
             "22-23赛季 常规赛", "22-23赛季 半决赛", "22-23赛季 决赛",
             "23-24赛季 常规赛", "23-24赛季 半决赛", "23-24赛季 决赛",
+            "24-25赛季 常规赛", "24-25赛季 半决赛", "24-25赛季 决赛",
     };
 
     public static int[] GAMENUMS = {
@@ -67,6 +72,7 @@ public class Constants {
             180, 24, 12,
             180, 24, 12,
             188, 30, 16,
+            216, 30, 16,
             216, 30, 16
     };
 
@@ -115,6 +121,8 @@ public class Constants {
         put(31, 4); put(32, 4); put(33, 4);
         put(34, 4); put(35, 3); put(36, 4);
         put(37, 4); put(38, 4); put(39, 4);
+        put(41, 4); put(42, 4); put(43, 4); put(44, 4);
+        put(45, 4); put(46, 4); put(47, 4);
         put(51, 1); put(52, 1); put(53, 1);
     }};
 
@@ -176,5 +184,6 @@ public class Constants {
     public static final String NAGA_PATTERN_1 = "/** NAGA度：%s 80.0; %s 80.0; %s 80.0; %s 80.0 */";
     public static final String NAGA_PATTERN_2 = "/** 一致率：%s 70.0%%; %s 70.0%%; %s 70.0%%; %s 70.0%% */";
     public static final String NAGA_PATTERN_3 = "/** 恶手率：%s 5.0%%; %s 5.0%%; %s 5.0%%; %s 5.0%% */";
+    public static final String NAGA_PATTERN_NEW = "/** %s(标准): NAGA度80.0; 一致率70.0%%; 恶手率5.0%% */";
 
 }

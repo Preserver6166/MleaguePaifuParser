@@ -55,11 +55,7 @@ public class KyokuLog {
 
     @JSONField(serialize = false)
     @Setter(AccessLevel.NONE)
-    private List<String>[] proHandRecords = new ArrayList[4]; // 按巡目记录选手的手牌
-
-    @JSONField(serialize = false)
-    @Setter(AccessLevel.NONE)
-    private List<String>[] proFuroRecords = new ArrayList[4]; // 按巡目记录选手的副露
+    private List<String>[] proPaiRecords = new ArrayList[4]; // 按巡目记录选手的手牌和副露
 
     public void setKyokuStartInfo(int kyokuStartInfo1, int kyokuStartInfo2, int kyokuStartInfo3) {
         kyokuStartInfo[0] = kyokuStartInfo1;
@@ -67,27 +63,16 @@ public class KyokuLog {
         kyokuStartInfo[2] = kyokuStartInfo3;
     }
 
-    public void initProHandRecords(int proIndex, String value) {
-        if (proHandRecords[proIndex] == null) {
-            proHandRecords[proIndex] = new ArrayList<>();
-            proHandRecords[proIndex].add(value);
+    public void appendProPaiRecords(int proIndex, String value) {
+        if (proPaiRecords[proIndex] == null) {
+            proPaiRecords[proIndex] = new ArrayList<>();
+            proPaiRecords[proIndex].add(value);
         } else {
-            String oldValue = proHandRecords[proIndex].get(0);
-            proHandRecords[proIndex].clear();
-            proHandRecords[proIndex].add(oldValue + value);
+            String oldValue = proPaiRecords[proIndex].get(proPaiRecords[proIndex].size()-1);
+            // TODO 摸牌
+            // TODO 切牌
+            // TODO 副露
         }
-    }
-
-    public void appendProHandRecords(int proIndex, String value) {
-        String oldValue = proHandRecords[proIndex].get(proHandRecords[proIndex].size()-1);
-    }
-
-    public void reduceProHandRecords(int proIndex, String value) {
-
-    }
-
-    public void appendProFuroRecords(int index, String value) {
-        proFuroRecords[index].add(value);
     }
 
     public void setKyokuStartPointInfo(int index, int value) {

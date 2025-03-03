@@ -7,7 +7,6 @@ import official.OfficialGameInfo;
 import official.ProInfo;
 import tenhou.KyokuLog;
 import tenhou.TenhouPaifu;
-import util.Majong;
 
 import java.io.File;
 import java.math.BigDecimal;

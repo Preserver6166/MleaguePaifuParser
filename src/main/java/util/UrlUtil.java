@@ -3,7 +3,7 @@ package util;
 import java.io.File;
 import java.io.PrintWriter;
 
-import static official.Constants.*;
+import static official.OfficialConstants.*;
 
 public class UrlUtil {
 

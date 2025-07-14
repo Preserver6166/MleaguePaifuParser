@@ -3,7 +3,7 @@ package official;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static official.Constants.*;
+import static official.OfficialConstants.*;
 
 /**
  * 牌谱名称的迭代器

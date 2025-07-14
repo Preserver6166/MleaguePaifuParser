@@ -48,7 +48,7 @@ public class PaifuAnalyzer {
     /**
      * 输出比赛信息
      */
-    public static void fun1(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+    public static void fun1a(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
 
         if (officialGameInfoList.size() > 30) {
             officialGameInfoList.forEach(officialGameInfo -> {
@@ -57,8 +57,25 @@ public class PaifuAnalyzer {
             return;
         }
         officialGameInfoList.forEach(officialGameInfo -> {
-//            printGame(officialGameInfo.getFileName(), officialGameInfo,
-//                    tenhouPaifuMap.get(officialGameInfo.getFileName()));
+            printGame(officialGameInfo.getFileName(), officialGameInfo,
+                    tenhouPaifuMap.get(officialGameInfo.getFileName()));
+        });
+        System.out.println("GAME_INFOS size:" + officialGameInfoList.size());
+
+    }
+
+    /**
+     * 输出比赛信息（与t-koyo对比专用）
+     */
+    public static void fun1b(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+
+        if (officialGameInfoList.size() > 30) {
+            officialGameInfoList.forEach(officialGameInfo -> {
+                System.out.println(officialGameInfo.getFileName());
+            });
+            return;
+        }
+        officialGameInfoList.forEach(officialGameInfo -> {
             printGameForCompare(officialGameInfo.getFileName(), officialGameInfo,
                     tenhouPaifuMap.get(officialGameInfo.getFileName()));
         });

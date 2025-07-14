@@ -13,9 +13,10 @@ public class App {
 
     public static void main (String[] args) {
         List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
-                "L001_S019_0092_01A", "L001_S019_0092_02A");
+                "L001_S001_0061_01A", "L001_S001_0070_01A");
         Map<String, TenhouPaifu> tenhouPaifuMap = TenhouPaifuUtil.generateTenhouPaifuMap(officialGameInfoList);
-        PaifuAnalyzer.fun1(officialGameInfoList, tenhouPaifuMap);
+//        PaifuAnalyzer.fun1a(officialGameInfoList, tenhouPaifuMap);
+        PaifuAnalyzer.fun1b(officialGameInfoList, tenhouPaifuMap);
 
 //        List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
 //                "L001_S001_0001_01A", "L001_S019_0091_02A");

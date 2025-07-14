@@ -309,6 +309,11 @@ public class TenhouPaifuUtil {
                         int targetPaiName = PAI_NAME_MAPPING.get(args[2]);
                         String kanRecord = convertPonRecordIfPossible(ponRecordList, targetPaiName);
                         if (kanRecord != null) { // 加杠
+//                            if (targetPaiName >= 51 && targetPaiName <=53) {
+//                                System.out.println(gameInfo.getFileName() + "\t" +
+//                                        kyokuLog.getKyokuStartInfo()[0] + "\t" +
+//                                        kyokuLog.getKyokuStartInfo()[1] + "\t 存在红5加杠");
+//                            }
                             kyokuLog.appendSutehaiInfo(proIndex, kanRecord);
                             lastSutehaiProIndex = proIndex;
                         } else { // 明杠之后, 要在sutehai里加个0
@@ -620,11 +625,18 @@ public class TenhouPaifuUtil {
             if ((sourcePaiName == targetPaiName) ||
                     (sourcePaiName == 51 && targetPaiName == 15) ||
                     (sourcePaiName == 52 && targetPaiName == 25) ||
-                    (sourcePaiName == 53 && targetPaiName == 35) ||
-                    (sourcePaiName == 15 && targetPaiName == 51) ||
-                    (sourcePaiName == 25 && targetPaiName == 52) ||
-                    (sourcePaiName == 35 && targetPaiName == 53)) {
+                    (sourcePaiName == 53 && targetPaiName == 35)) {
                 String kanRecord = ponRecord.replaceAll("p", "k") + targetPaiName;
+                return kanRecord;
+            } else if (sourcePaiName == 15 && targetPaiName == 51) {
+                //使用5M加杠时遵循：碰的上家则k51151515，碰的对家则15k511515，碰的下家则1515k5115
+                String kanRecord = ponRecord.replaceAll("p15","k51") + "15";
+                return kanRecord;
+            } else if (sourcePaiName == 25 && targetPaiName == 52) {
+                String kanRecord = ponRecord.replaceAll("p25","k52") + "25";
+                return kanRecord;
+            } else if (sourcePaiName == 35 && targetPaiName == 53) {
+                String kanRecord = ponRecord.replaceAll("p35","k53") + "35";
                 return kanRecord;
             }
         }

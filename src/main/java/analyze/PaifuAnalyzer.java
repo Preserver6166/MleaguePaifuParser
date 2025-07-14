@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import mahjongutils.models.Tile;
 import mahjongutils.shanten.*;
 import official.OfficialGameInfo;
+import official.OfficialPaifuUtil;
 import official.ProInfo;
 import tenhou.KyokuLog;
 import tenhou.TenhouPaifu;
@@ -20,6 +21,11 @@ import static tenhou.TenhouConstants.*;
 
 public class PaifuAnalyzer {
 
+    /**
+     * 计划中的数据视频
+     * TODO AL之王数据统计
+     *
+     */
     // TODO 所有对PRO_INFO进行的统计操作后续整合到一起去
 //    int kyokuCount = tenhouPaifu.getLog().size();
 //                        Arrays.stream(gameInfo.getProNames()).forEach(proName -> {
@@ -40,7 +46,7 @@ public class PaifuAnalyzer {
 //    });
 
     /**
-     * 用来打印比赛信息的函数
+     * 输出比赛信息
      */
     public static void fun1(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
 
@@ -51,7 +57,9 @@ public class PaifuAnalyzer {
             return;
         }
         officialGameInfoList.forEach(officialGameInfo -> {
-            printGame(officialGameInfo.getFileName(), officialGameInfo,
+//            printGame(officialGameInfo.getFileName(), officialGameInfo,
+//                    tenhouPaifuMap.get(officialGameInfo.getFileName()));
+            printGameForCompare(officialGameInfo.getFileName(), officialGameInfo,
                     tenhouPaifuMap.get(officialGameInfo.getFileName()));
         });
         System.out.println("GAME_INFOS size:" + officialGameInfoList.size());
@@ -59,8 +67,8 @@ public class PaifuAnalyzer {
     }
 
     /**
-     2019/10/17 第1試合 佐々木寿人 vs 小林剛 vs 鈴木たろう vs 黒沢咲
-     黒沢咲 +57.4pt; 小林剛 +16.9pt; 佐々木寿人 -25.3pt; 鈴木たろう -49.0pt
+     * 2019/10/17 第1試合 佐々木寿人 vs 小林剛 vs 鈴木たろう vs 黒沢咲
+     * 黒沢咲 +57.4pt; 小林剛 +16.9pt; 佐々木寿人 -25.3pt; 鈴木たろう -49.0pt
      */
     private static void printGame(String fileName, OfficialGameInfo gameInfo, TenhouPaifu tenhouPaifu) {
         System.out.println("++++++++" + fileName + "++++++++");
@@ -95,15 +103,261 @@ public class PaifuAnalyzer {
         System.out.println();
     }
 
-    /**
-     * 计划中的数据视频
-     * TODO AL之王数据统计
-     */
-    public static void funUnLabeled() {
-
+    // 与t-yoko牌谱比较时的临时打印
+    private static void printGameForCompare(String fileName, OfficialGameInfo gameInfo, TenhouPaifu tenhouPaifu) {
+        tenhouPaifu.getRule().setDisp("");
+        for(KyokuLog kyokuLog: tenhouPaifu.getLog()) {
+            if (kyokuLog.getKyokuEndDetail().size()!=0) {
+                while(kyokuLog.getKyokuEndDetail().size() != 4) {
+                    kyokuLog.getKyokuEndDetail().remove(4);
+                }
+            }
+        }
+        System.out.println(JSONObject.toJSONString(tenhouPaifu));
     }
 
-    // 计算选手预期中里率和实际中里率
+    // 每个赛季 伊达上家和下家的顺位和pt
+    public static void funUnLabeled(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+        Map<String, Integer> season_gameCount = new LinkedHashMap<>();
+        Map<String, Integer> season_rank1 = new LinkedHashMap<>(); // 上家
+        Map<String, Integer> season_rank2 = new LinkedHashMap<>(); // 下家
+        Map<String, BigDecimal> season_point1 = new LinkedHashMap<>(); // 上家
+        Map<String, BigDecimal> season_point2 = new LinkedHashMap<>(); // 下家
+
+        for(OfficialGameInfo gameInfo : officialGameInfoList) {
+            String season = gameInfo.getSeason().substring(0, gameInfo.getSeason().indexOf("赛季")+2);
+            if (!season_gameCount.containsKey(season)) {
+                season_gameCount.put(season, 0);
+                season_rank1.put(season, 0);
+                season_rank2.put(season, 0);
+                season_point1.put(season, new BigDecimal(0));
+                season_point2.put(season, new BigDecimal(0));
+            }
+            if (gameInfo.getProNames()[0].equals("伊達朱里紗")) {
+                season_gameCount.put(season, season_gameCount.get(season)+1);
+                season_rank1.put(season, season_rank1.get(season) + gameInfo.getProRanks()[3]);
+                season_rank2.put(season, season_rank2.get(season) + gameInfo.getProRanks()[1]);
+                season_point1.put(season, season_point1.get(season).add(gameInfo.getProPoints()[3]));
+                season_point2.put(season, season_point2.get(season).add(gameInfo.getProPoints()[1]));
+            } else if (gameInfo.getProNames()[1].equals("伊達朱里紗")) {
+                season_gameCount.put(season, season_gameCount.get(season)+1);
+                season_rank1.put(season, season_rank1.get(season) + gameInfo.getProRanks()[0]);
+                season_rank2.put(season, season_rank2.get(season) + gameInfo.getProRanks()[2]);
+                season_point1.put(season, season_point1.get(season).add(gameInfo.getProPoints()[0]));
+                season_point2.put(season, season_point2.get(season).add(gameInfo.getProPoints()[2]));
+            } else if (gameInfo.getProNames()[2].equals("伊達朱里紗")) {
+                season_gameCount.put(season, season_gameCount.get(season)+1);
+                season_rank1.put(season, season_rank1.get(season) + gameInfo.getProRanks()[1]);
+                season_rank2.put(season, season_rank2.get(season) + gameInfo.getProRanks()[3]);
+                season_point1.put(season, season_point1.get(season).add(gameInfo.getProPoints()[1]));
+                season_point2.put(season, season_point2.get(season).add(gameInfo.getProPoints()[3]));
+            } else if (gameInfo.getProNames()[3].equals("伊達朱里紗")) {
+                season_gameCount.put(season, season_gameCount.get(season)+1);
+                season_rank1.put(season, season_rank1.get(season) + gameInfo.getProRanks()[2]);
+                season_rank2.put(season, season_rank2.get(season) + gameInfo.getProRanks()[0]);
+                season_point1.put(season, season_point1.get(season).add(gameInfo.getProPoints()[2]));
+                season_point2.put(season, season_point2.get(season).add(gameInfo.getProPoints()[0]));
+            } else {
+                // do nothing
+            }
+        }
+
+        season_gameCount.keySet().forEach(season -> {
+            System.out.println(season + "\t" + season_gameCount.get(season) + "\t" +
+                    season_rank1.get(season) + "\t" + season_rank2.get(season) + "\t" +
+                    season_point1.get(season) + "\t" + season_point2.get(season));
+        });
+    }
+
+    public static void fun46_1(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+        int kyokuCount = 0;// 0-1, 2-3, 4-5, 6-7
+//        int[] pairCount = new int[4];
+//        int[] kongCount = new int[4];
+        int[] shantenCount_loc = new int[4];
+        for (OfficialGameInfo gameInfo : officialGameInfoList) {
+            TenhouPaifu tenhouPaifu = tenhouPaifuMap.get(gameInfo.getFileName());
+            kyokuCount++;
+            for (int i=0; i<tenhouPaifu.getLog().size(); i++) {
+                for (int j=0; j<4; j++) {
+                    List<String> haipaiInfo = Arrays.stream(tenhouPaifu.getLog().get(i).getHaipaiInfo()[j]).mapToObj(
+                            haipai -> PAI_NAME_MAPPING.inverse().get(haipai)).collect(Collectors.toList());
+                    String haipaiString = String.join("", haipaiInfo);
+                    List<Tile> tiles = Tile.Companion.parseTiles(haipaiString.toLowerCase());
+                    ShantenResult rs1 = ShantenKt.shanten(tiles);
+                    int minShanten = rs1.getShantenInfo().getShantenNum();
+                    shantenCount_loc[j] += minShanten;
+                }
+            }
+            // 先计算前8局
+//            for(int i=0; i<8; i+=2) {
+//                kyokuCount++;
+//                KyokuLog oddLog = tenhouPaifu.getLog().get(i);
+//                KyokuLog evenLog = tenhouPaifu.getLog().get(i+1);
+//                for(int j=0; j<4; j++) {
+//                    pairCount[i/2] += countPair(oddLog.getHaipaiInfo()[j]);
+//                    pairCount[i/2] += countPair(evenLog.getHaipaiInfo()[j]);
+//                    kongCount[i/2] += countKong(oddLog.getHaipaiInfo()[j]);
+//                    kongCount[i/2] += countKong(evenLog.getHaipaiInfo()[j]);
+//                }
+//            }
+        }
+//        for (int i=0; i<4; i++) {
+//            System.out.println(pairCount[i] + "\t" + kongCount[i]);
+//        }
+        for (int i=0; i<shantenCount_loc.length; i++) {
+            System.out.println(shantenCount_loc[i] + "\t" + kyokuCount);
+        }
+    }
+
+    /**
+     * 统计当前局dora指示牌与上上局dora指示牌是否一致
+     */
+    public static void fun45_2(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+        int sameCount = 0;
+        int diffCount = 0;
+        for (OfficialGameInfo gameInfo : officialGameInfoList) {
+            TenhouPaifu tenhouPaifu = tenhouPaifuMap.get(gameInfo.getFileName());
+            for (int i = 2; i < tenhouPaifu.getLog().size(); i++) {
+                int currentDoraIndicator = tenhouPaifu.getLog().get(i).getDoraInfo().get(0);
+                int lastlastDoraIndicator = tenhouPaifu.getLog().get(i - 2).getDoraInfo().get(0);
+                if (currentDoraIndicator == lastlastDoraIndicator) {
+                    sameCount++;
+                } else if (currentDoraIndicator == 51 && lastlastDoraIndicator == 15) {
+                    sameCount++;
+                } else if (currentDoraIndicator == 52 && lastlastDoraIndicator == 25) {
+                    sameCount++;
+                } else if (currentDoraIndicator == 53 && lastlastDoraIndicator == 35) {
+                    sameCount++;
+                } else if (currentDoraIndicator == 15 && lastlastDoraIndicator == 51) {
+                    sameCount++;
+                } else if (currentDoraIndicator == 25 && lastlastDoraIndicator == 52) {
+                    sameCount++;
+                } else if (currentDoraIndicator == 35 && lastlastDoraIndicator == 53) {
+                    sameCount++;
+                } else {
+                    diffCount++;
+                }
+            }
+        }
+
+        System.out.println(sameCount + "\t" + diffCount);
+    }
+
+    /**
+     * 统计每种dora指示牌的分布
+     */
+    public static void fun45_1(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+        int[] doraCount = new int[53];
+        for(OfficialGameInfo gameInfo : officialGameInfoList) {
+            TenhouPaifu tenhouPaifu = tenhouPaifuMap.get(gameInfo.getFileName());
+            tenhouPaifu.getLog().forEach(kyokuLog -> {
+                int doraIndicator = kyokuLog.getDoraInfo().get(0);
+                doraCount[doraIndicator-1]++;
+            });
+        }
+        for (int i=11; i<=19; i++) {
+            System.out.println((i-10) + "m\t" + doraCount[i-1]);
+        }
+        System.out.println("0m\t" + doraCount[51-1]);
+        for (int i=21; i<=29; i++) {
+            System.out.println((i-20) + "p\t" + doraCount[i-1]);
+        }
+        System.out.println("0p\t" + doraCount[52-1]);
+        for (int i=31; i<=39; i++) {
+            System.out.println((i-30) + "s\t" + doraCount[i-1]);
+        }
+        System.out.println("0s\t" + doraCount[53-1]);
+        for (int i=41; i<=47; i++) {
+            System.out.println((i-40) + "z\t" + doraCount[i-1]);
+        }
+    }
+
+    public static void fun43(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+        Map<String, Integer> pro_kyokuCount = new LinkedHashMap<>();
+        Map<String, Integer> pro_agariCount = new LinkedHashMap<>();
+        Map<String, Integer> pro_oneFanCountN = new LinkedHashMap<>(); // 狭义：仅考虑没有场供，0本场时，和到1番1000点的情况
+        Map<String, Integer> pro_oneFanCountW = new LinkedHashMap<>(); // 广义：只要1番即可，不考虑场供、本场、符数
+        Map<String, Integer> pro_twoFanCountB = new LinkedHashMap<>(); // 2番以下
+
+        for(OfficialGameInfo gameInfo : officialGameInfoList) {
+            TenhouPaifu tenhouPaifu = tenhouPaifuMap.get(gameInfo.getFileName());
+            for (int i=0; i<tenhouPaifu.getName().length; i++) {
+                if (!pro_kyokuCount.containsKey(tenhouPaifu.getName()[i])) {
+                    pro_kyokuCount.put(tenhouPaifu.getName()[i], 0);
+                    pro_agariCount.put(tenhouPaifu.getName()[i], 0);
+                    pro_oneFanCountN.put(tenhouPaifu.getName()[i], 0);
+                    pro_oneFanCountW.put(tenhouPaifu.getName()[i], 0);
+                    pro_twoFanCountB.put(tenhouPaifu.getName()[i], 0);
+                }
+                pro_kyokuCount.put(tenhouPaifu.getName()[i],
+                        pro_kyokuCount.get(tenhouPaifu.getName()[i]) + tenhouPaifu.getLog().size());
+            }
+            for (KyokuLog kyokuLog : tenhouPaifu.getLog()) {
+                List<Object> kyokuEndDetail = kyokuLog.getKyokuEndDetail();
+                if (kyokuEndDetail.size() >= 5) {
+                    int agariProIndex = (Integer) kyokuEndDetail.get(0);
+                    String agariProName = tenhouPaifu.getName()[agariProIndex];
+                    pro_agariCount.put(agariProName, pro_agariCount.get(agariProName)+1);
+                    String pointInfo = (String) kyokuEndDetail.get(3);
+                    if (pointInfo.contains("1飜")) {
+                        pro_oneFanCountW.put(agariProName, pro_oneFanCountW.get(agariProName)+1);
+                        if (kyokuLog.getKyokuStartInfo()[1] == 0 && kyokuLog.getKyokuStartInfo()[2] == 0 &&
+                                pointInfo.contains("1000点")) {
+                            pro_oneFanCountN.put(agariProName, pro_oneFanCountN.get(agariProName)+1);
+                        }
+                    }
+                    if (pointInfo.contains("1飜") || pointInfo.contains("2飜")) {
+                        pro_twoFanCountB.put(agariProName, pro_twoFanCountB.get(agariProName)+1);
+                    }
+                }
+            }
+        }
+
+        pro_kyokuCount.keySet().forEach(proName -> {
+            System.out.println(proName + "\t" +
+                    pro_kyokuCount.get(proName) + "\t" + pro_agariCount.get(proName) + "\t" +
+                    pro_oneFanCountN.get(proName) + "\t" + pro_oneFanCountW.get(proName) + "\t" +
+                    pro_twoFanCountB.get(proName));
+        });
+    }
+
+    public static void fun42(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+
+        String agariProName = "高宮まり";
+        String hojuProName = "堀慎吾";
+
+        for(OfficialGameInfo gameInfo : officialGameInfoList) {
+            TenhouPaifu tenhouPaifu = tenhouPaifuMap.get(gameInfo.getFileName());
+            String[] proNames = tenhouPaifu.getName();
+            boolean hasTargetProName = false;
+            for (int i=0; i<proNames.length; i++) {
+                for (int j = 0; j < proNames.length; j++) {
+                    if (proNames[i].equals(agariProName) && proNames[j].equals(hojuProName)) {
+                        hasTargetProName = true;
+                    }
+                }
+            }
+            if (!hasTargetProName) {
+                continue;
+            }
+            for (KyokuLog log : tenhouPaifu.getLog()) {
+                if (log.getKyokuEndDetail().size() > 0) {
+                    int agariIndex = (Integer) log.getKyokuEndDetail().get(0);
+                    int hojuIndex = (Integer) log.getKyokuEndDetail().get(1);
+                    if (hojuIndex != agariIndex) {
+                        if (proNames[agariIndex].equals(agariProName) &&
+                                proNames[hojuIndex].equals(hojuProName)) {
+                            System.out.println(gameInfo.getGameBrief() + "\n" + log.getKyokuBrief());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 统计选手预期中里率和实际中里率
+     */
     public static void fun33(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
 
         Map<String, List<Integer>> pro_actUraNumList= new HashMap<>(); // 实际中里期望值
@@ -305,7 +559,81 @@ public class PaifuAnalyzer {
         });
     }
 
-    // 孟获
+    /**
+     * 统计选手的最佳上分拍档、上分贡献、最佳下分拍档、下分贡献、半庄数
+     */
+    public static void fun32(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+        Map<String, BigDecimal> proComb_score = new LinkedHashMap<>();
+        Map<String, BigDecimal> proA_score = new LinkedHashMap<>();
+        Map<String, BigDecimal> proB_score = new LinkedHashMap<>();
+        Map<String, Integer> proComb_num = new LinkedHashMap<>();
+        for (OfficialGameInfo gameInfo : officialGameInfoList) {
+//            if (gameInfo.getFileName().contains("S001") ||
+//                    gameInfo.getFileName().contains("S003") ||
+//                    gameInfo.getFileName().contains("S007") ||
+//                    gameInfo.getFileName().contains("S010") ||
+//                    gameInfo.getFileName().contains("S013") ||
+//                    gameInfo.getFileName().contains("S016")) {
+//            } else {
+//                continue;
+//            }
+            String[] proNames = gameInfo.getProNames();
+            BigDecimal[] proPoints = gameInfo.getProPoints();
+            String[] proNameCombs = new String[]{
+                    (proNames[0] + "\t" + proNames[1]), (proNames[1] + "\t" + proNames[0]),
+                    (proNames[0] + "\t" + proNames[2]), (proNames[2] + "\t" + proNames[0]),
+                    (proNames[0] + "\t" + proNames[3]), (proNames[3] + "\t" + proNames[0]),
+                    (proNames[1] + "\t" + proNames[2]), (proNames[2] + "\t" + proNames[1]),
+                    (proNames[1] + "\t" + proNames[3]), (proNames[3] + "\t" + proNames[1]),
+                    (proNames[2] + "\t" + proNames[3]), (proNames[3] + "\t" + proNames[2])
+            };
+            Arrays.stream(proNameCombs).forEach(proComb -> {
+                if (!proComb_score.containsKey(proComb)) {
+                    proComb_score.put(proComb, new BigDecimal(0));
+                    proA_score.put(proComb, new BigDecimal(0));
+                    proB_score.put(proComb, new BigDecimal(0));
+                    proComb_num.put(proComb, 0);
+                }
+            });
+            int[] proIndex = {0, 1, 0, 2, 0, 3, 1, 2, 1, 3, 2, 3};
+            for (int i=0; i<proNameCombs.length; i+=2) {
+                BigDecimal pt1 = proPoints[proIndex[i]];
+                BigDecimal pt2 = proPoints[proIndex[i+1]];
+                BigDecimal newScoreComb1 = proComb_score.get(proNameCombs[i]).add(pt1).add(pt2);
+                BigDecimal newScoreComb2 = proComb_score.get(proNameCombs[i+1]).add(pt1).add(pt2);
+                proComb_score.put(proNameCombs[i], newScoreComb1);
+                proComb_score.put(proNameCombs[i+1], newScoreComb2);
+                BigDecimal newScoreA1 = proA_score.get(proNameCombs[i]).add(pt1);
+                BigDecimal newScoreA2 = proA_score.get(proNameCombs[i+1]).add(pt2);
+                BigDecimal newScoreB1 = proB_score.get(proNameCombs[i+1]).add(pt2);
+                BigDecimal newScoreB2 = proB_score.get(proNameCombs[i]).add(pt1);
+                proA_score.put(proNameCombs[i], newScoreA1);
+                proA_score.put(proNameCombs[i+1], newScoreA2);
+                proB_score.put(proNameCombs[i+1], newScoreB1);
+                proB_score.put(proNameCombs[i], newScoreB2);
+                proComb_num.put(proNameCombs[i], proComb_num.get(proNameCombs[i])+1);
+                proComb_num.put(proNameCombs[i+1], proComb_num.get(proNameCombs[i+1])+1);
+            }
+        }
+
+//        String[] percent;
+//        percent = calPercent(30,50);
+//        System.out.println(percent[0]+"\t"+percent[1]);
+//        percent = calPercent(-45,-55);
+//        System.out.println(percent[0]+"\t"+percent[1]);
+//        percent = calPercent(45,-80);
+//        System.out.println(percent[0]+"\t"+percent[1]);
+//        percent = calPercent(72,-33);
+//        System.out.println(percent[0]+"\t"+percent[1]);
+        for(String proComb: proComb_score.keySet()) {
+            System.out.println(proComb + "\t" + proComb_score.get(proComb) + "\t" +
+                    proA_score.get(proComb) + "\t" + proComb_num.get(proComb));
+        }
+    }
+
+    /**
+     * 孟获
+     */
     public static void fun29(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         Map<String, Integer> proPro_state = new HashMap<>();
         Map<String, List<String>> proPro_detail = new HashMap<>();
@@ -369,7 +697,10 @@ public class PaifuAnalyzer {
         }
     }
 
-    // 记谱错误
+    /**
+     * 记谱错误
+     * TODO 基于errors_v2.txt直接生成结果
+     */
     public static void fun28(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         Map<String, Integer> proName_errorCount = new HashMap<>();
         Map<String, Integer> proNameAndSeason_errorCount = new HashMap<>();
@@ -434,7 +765,7 @@ public class PaifuAnalyzer {
         }
     }
 
-    // TODO 统计选手23-24赛季的通算战绩、战绩方差、平均NAGA度、NAGA度方差、半庄数
+    // TODO 统计选手通算战绩、战绩方差、平均NAGA度、NAGA度方差、半庄数
 
     /**
      * 统计园田贤经历的所有里3
@@ -468,82 +799,17 @@ public class PaifuAnalyzer {
     }
 
     /**
-     * 统计选手的最佳上分拍档、上分贡献、最佳下分拍档、下分贡献、半庄数
+     * 统计选手配牌平均向听、配牌平均dora
+     * TODO 目前计算向听有bug，见https://github.com/ssttkkl/mahjong-utils/issues/24
      */
-    public static void fun32(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
-        Map<String, BigDecimal> proComb_score = new LinkedHashMap<>();
-        Map<String, BigDecimal> proA_score = new LinkedHashMap<>();
-        Map<String, BigDecimal> proB_score = new LinkedHashMap<>();
-        Map<String, Integer> proComb_num = new LinkedHashMap<>();
-        for (OfficialGameInfo gameInfo : officialGameInfoList) {
-            if (gameInfo.getFileName().contains("S001") ||
-                    gameInfo.getFileName().contains("S003") ||
-                    gameInfo.getFileName().contains("S007") ||
-                    gameInfo.getFileName().contains("S010") ||
-                    gameInfo.getFileName().contains("S013") ||
-                    gameInfo.getFileName().contains("S016")) {
-            } else {
-                continue;
-            }
-            String[] proNames = gameInfo.getProNames();
-            BigDecimal[] proPoints = gameInfo.getProPoints();
-            String[] proNameCombs = new String[]{
-                    (proNames[0] + "\t" + proNames[1]), (proNames[1] + "\t" + proNames[0]),
-                    (proNames[0] + "\t" + proNames[2]), (proNames[2] + "\t" + proNames[0]),
-                    (proNames[0] + "\t" + proNames[3]), (proNames[3] + "\t" + proNames[0]),
-                    (proNames[1] + "\t" + proNames[2]), (proNames[2] + "\t" + proNames[1]),
-                    (proNames[1] + "\t" + proNames[3]), (proNames[3] + "\t" + proNames[1]),
-                    (proNames[2] + "\t" + proNames[3]), (proNames[3] + "\t" + proNames[2])
-            };
-            Arrays.stream(proNameCombs).forEach(proComb -> {
-                if (!proComb_score.containsKey(proComb)) {
-                    proComb_score.put(proComb, new BigDecimal(0));
-                    proA_score.put(proComb, new BigDecimal(0));
-                    proB_score.put(proComb, new BigDecimal(0));
-                    proComb_num.put(proComb, 0);
-                }
-            });
-            int[] proIndex = {0, 1, 0, 2, 0, 3, 1, 2, 1, 3, 2, 3};
-            for (int i=0; i<proNameCombs.length; i+=2) {
-                BigDecimal pt1 = proPoints[proIndex[i]];
-                BigDecimal pt2 = proPoints[proIndex[i+1]];
-                BigDecimal newScoreComb1 = proComb_score.get(proNameCombs[i]).add(pt1).add(pt2);
-                BigDecimal newScoreComb2 = proComb_score.get(proNameCombs[i+1]).add(pt1).add(pt2);
-                proComb_score.put(proNameCombs[i], newScoreComb1);
-                proComb_score.put(proNameCombs[i+1], newScoreComb2);
-                BigDecimal newScoreA1 = proA_score.get(proNameCombs[i]).add(pt1);
-                BigDecimal newScoreA2 = proA_score.get(proNameCombs[i+1]).add(pt2);
-                BigDecimal newScoreB1 = proB_score.get(proNameCombs[i+1]).add(pt2);
-                BigDecimal newScoreB2 = proB_score.get(proNameCombs[i]).add(pt1);
-                proA_score.put(proNameCombs[i], newScoreA1);
-                proA_score.put(proNameCombs[i+1], newScoreA2);
-                proB_score.put(proNameCombs[i+1], newScoreB1);
-                proB_score.put(proNameCombs[i], newScoreB2);
-                proComb_num.put(proNameCombs[i], proComb_num.get(proNameCombs[i])+1);
-                proComb_num.put(proNameCombs[i+1], proComb_num.get(proNameCombs[i+1])+1);
-            }
-        }
-
-//        String[] percent;
-//        percent = calPercent(30,50);
-//        System.out.println(percent[0]+"\t"+percent[1]);
-//        percent = calPercent(-45,-55);
-//        System.out.println(percent[0]+"\t"+percent[1]);
-//        percent = calPercent(45,-80);
-//        System.out.println(percent[0]+"\t"+percent[1]);
-//        percent = calPercent(72,-33);
-//        System.out.println(percent[0]+"\t"+percent[1]);
-        for(String proComb: proComb_score.keySet()) {
-            System.out.println(proComb + "\t" + proComb_score.get(proComb) + "\t" +
-                    proA_score.get(proComb) + "\t" + proComb_num.get(proComb));
-        }
-    }
-
-    /**
-     * TODO 统计选手配牌平均向听、配牌平均dora、平均听牌巡目
-     */
-    public static void fun24_2(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+    public static void fun24(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         Map<String, AnalyzeProInfo> analyzeProInfoMap = AnalyzeProInfo.initAnalyzeProInfoMap();
+//        PrintWriter pw;
+//        try {
+//            pw = new PrintWriter(PATH + "/Documents/fun24.txt");
+//        } catch (Exception ex) {
+//            return;
+//        }
 
         officialGameInfoList.forEach(officialGameInfo -> {
             for (int i=0; i<officialGameInfo.getProNames().length; i++) {
@@ -563,6 +829,10 @@ public class PaifuAnalyzer {
                     ShantenResult rs1 = ShantenKt.shanten(tiles);
                     int minShanten = rs1.getShantenInfo().getShantenNum();
                     String proName = officialGameInfo.getProNames()[i];
+//                    String[] tileString = convertTileString(tiles.stream().map(tile->tile.toString()).collect(Collectors.joining("")));
+//                    pw.println(proName + "\t" + minShanten + "\t" +
+//                            tileString[0] + "\t" + tileString[1] + "\t" +
+//                            tileString[2] + "\t" + tileString[3]);
                     AnalyzeProInfo analyzeProInfo = analyzeProInfoMap.get(proName);
                     int akaCount = Long.valueOf(haipaiInfo.stream().filter(haipai ->
                             haipai.contains("M") || haipai.contains("P") || haipai.contains("S")).count()).intValue();
@@ -581,10 +851,13 @@ public class PaifuAnalyzer {
                     analyzeProInfoMap.get(proName).getHaipaiDoraCount() + "\t" +
                     analyzeProInfoMap.get(proName).getKyokuCount());
         });
+
+//        pw.close();
     }
 
     /**
      * 统计NAGA度与战绩关系
+     * 数据仅限于20221128-20230131
      */
     public static void fun21(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         Map<String, Integer> proName_nagaPoint = new LinkedHashMap<>() {{
@@ -617,9 +890,7 @@ public class PaifuAnalyzer {
     /**
      * 统计每位选手初战到吃一的累计时间
      */
-    public static void fun19(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) throws Exception {
-
-        String[] proNamesInOrder = PRO_INFO.keySet().toArray(new String[PRO_INFO.size()]);
+    public static void fun19(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
 
         Map<String, OfficialGameInfo> proName_firstGameDate = new LinkedHashMap<>();
         Map<String, OfficialGameInfo> proName_firstRank0Date = new LinkedHashMap<>();
@@ -678,7 +949,7 @@ public class PaifuAnalyzer {
     }
 
     /**
-     * @return
+     *
      */
     private static String[] calPercent(int partA, int partB) {
         int total = partA + partB;
@@ -764,4 +1035,71 @@ public class PaifuAnalyzer {
             }
         }
     }
+
+    private static String[] convertTileString(String param) {
+        String[] ret = new String[4];
+        List<String> mlist = new ArrayList<>();
+        List<String> plist = new ArrayList<>();
+        List<String> slist = new ArrayList<>();
+        List<String> zlist = new ArrayList<>();
+        for (int i=0; i<param.length()-1; i+=2) {
+            String type = param.substring(i + 1, i + 2);
+            switch (type) {
+                case "m":
+                    mlist.add(param.substring(i, i + 1));
+                    break;
+                case "p":
+                    plist.add(param.substring(i, i + 1));
+                    break;
+                case "s":
+                    slist.add(param.substring(i, i + 1));
+                    break;
+                case "z":
+                    zlist.add(param.substring(i, i + 1));
+                    break;
+                default:
+                    break;
+            }
+        }
+        ret[0] = mlist.stream().sorted().collect(Collectors.joining(""));
+        ret[1] = plist.stream().sorted().collect(Collectors.joining(""));
+        ret[2] = slist.stream().sorted().collect(Collectors.joining(""));
+        ret[3] = zlist.stream().sorted().collect(Collectors.joining(""));
+        return ret;
+    }
+
+    private static int countPair(int[] tiles) {
+       Map<Integer, Integer> tile_count = new HashMap<>();
+       for (int i=0; i<tiles.length; i++) {
+           if (!tile_count.containsKey(tiles[i])) {
+               tile_count.put(tiles[i], 0);
+           }
+           tile_count.put(tiles[i], tile_count.get(tiles[i])+1);
+       }
+       int ret = 0;
+       for (Integer tile: tile_count.keySet()) {
+           if (tile_count.get(tile) == 2) {
+               ret += 1;
+           }
+       }
+       return ret;
+    }
+
+    private static int countKong(int[] tiles) {
+        Map<Integer, Integer> tile_count = new HashMap<>();
+        for (int i=0; i<tiles.length; i++) {
+            if (!tile_count.containsKey(tiles[i])) {
+                tile_count.put(tiles[i], 0);
+            }
+            tile_count.put(tiles[i], tile_count.get(tiles[i])+1);
+        }
+        int ret = 0;
+        for (Integer tile: tile_count.keySet()) {
+            if (tile_count.get(tile) >= 3) {
+                ret += 1;
+            }
+        }
+        return ret;
+    }
+
 }

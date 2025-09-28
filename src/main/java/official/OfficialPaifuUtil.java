@@ -3,6 +3,7 @@ package official;
 import com.alibaba.fastjson.JSONArray;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,22 +19,39 @@ public class OfficialPaifuUtil {
      */
     public static List<OfficialGameInfo> generateOfficialGameInfoList(
             String startGame, String endGame) {
+        List<String[]> officialFileInfoList = new ArrayList<>();
+        try {
+            Scanner scanner = new Scanner(new File(SCHEDULE_FILE));
+            while (scanner.hasNextLine()) {
+                String[] officialFileInfo = scanner.nextLine().split("\t");
+                String fileName = officialFileInfo[0];
+                if (fileName.compareTo(startGame) >= 0) {
+                    if (fileName.compareTo(endGame) <= 0) {
+                        assert fileName.length() == 18;
+                        officialFileInfoList.add(officialFileInfo);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            scanner.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Cannot find schedule file");
+        }
+
         List<OfficialGameInfo> officialGameInfoList = new ArrayList<>();
-        Iterator<OfficialGameInfo.OfficialGameInfoBuilder> iterator = new OfficialGameFileIterator().iterator();
-        while(iterator.hasNext()) {
-            OfficialGameInfo.OfficialGameInfoBuilder officialGameInfoBuilder = iterator.next();
-            String fileName = officialGameInfoBuilder.build().getFileName();
-            if (fileName.compareTo(startGame) < 0) {
-                continue;
-            }
-            if (fileName.compareTo(endGame) > 0) {
-                continue;
-            }
-            assert fileName.length() == 18;
+        for (String[] officialFileInfo: officialFileInfoList) {
+            String fileName = officialFileInfo[0];
+            String dayInfo = officialFileInfo[1];
             File file = new File(FILENAME_PREFIX_V2 + fileName);
             if (file.exists()) {
                 try {
-                    officialGameInfoBuilder.dayIndex(fileName.charAt(16) - 48);
+                    OfficialGameInfo.OfficialGameInfoBuilder officialGameInfoBuilder =
+                            OfficialGameInfo.builder();
+                    officialGameInfoBuilder.fileName(fileName);
+                    officialGameInfoBuilder.dayIndex(dayInfo.charAt(12) - 48);
+                    // example: L001_S022_0008_02A
+                    officialGameInfoBuilder.season(SEASON_MAP.get(fileName.split("_")[1]));
                     Scanner scanner = new Scanner(file);
                     while(scanner.hasNextLine()) {
                         String line = scanner.nextLine();
@@ -54,6 +72,42 @@ public class OfficialPaifuUtil {
                 System.out.println(fileName + " does not exist");
             }
         }
+
+//        Iterator<OfficialGameInfo.OfficialGameInfoBuilder> iterator = new OfficialGameFileIterator().iterator();
+//        while(iterator.hasNext()) {
+//            OfficialGameInfo.OfficialGameInfoBuilder officialGameInfoBuilder = iterator.next();
+//            String fileName = officialGameInfoBuilder.build().getFileName();
+//            if (fileName.compareTo(startGame) < 0) {
+//                continue;
+//            }
+//            if (fileName.compareTo(endGame) > 0) {
+//                continue;
+//            }
+//            assert fileName.length() == 18;
+//            File file = new File(FILENAME_PREFIX_V2 + fileName);
+//            if (file.exists()) {
+//                try {
+//                    officialGameInfoBuilder.dayIndex(fileName.charAt(16) - 48);
+//                    Scanner scanner = new Scanner(file);
+//                    while(scanner.hasNextLine()) {
+//                        String line = scanner.nextLine();
+//                        if (line.contains(TIME_START_SIGNAL)) {
+//                            parseTime(officialGameInfoBuilder, line);
+//                        } else if (line.contains(PAIFU_START_SIGNAL)) {
+//                            parsePaifu(officialGameInfoBuilder, line);
+//                        }
+//                    }
+//                    scanner.close();
+//                    OfficialGameInfo gameInfo = officialGameInfoBuilder.build();
+//                    validateOfficialGameInfo(gameInfo);
+//                    officialGameInfoList.add(gameInfo);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//            } else {
+//                System.out.println(fileName + " does not exist");
+//            }
+//        }
         return officialGameInfoList;
     }
 

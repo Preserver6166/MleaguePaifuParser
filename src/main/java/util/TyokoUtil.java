@@ -23,7 +23,7 @@ public class TyokoUtil {
 
     public static void main (String[] args) {
         List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
-                "L001_S001_0061_01A", "L001_S001_0070_02A");
+                "L001_S022_0008_01A", "L001_S022_0008_02B");
         for (OfficialGameInfo officialGameInfo: officialGameInfoList) {
             String fileName = officialGameInfo.getFileName();
             TenhouPaifu paifu = readPaifuFromFile(fileName);
@@ -42,9 +42,15 @@ public class TyokoUtil {
             Scanner scanner = new Scanner(new File(TYOKO_PAIFU_PATH + fileName));
             while(scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                if (line.startsWith(TYOKO_PAIFU_PREFIX) && line.endsWith(TYOKO_PAIFU_SUFFIX)) {
-                    JSONObject gameJson = JSONObject.parseObject(
-                            line.substring(TYOKO_PAIFU_PREFIX.length(), line.length()-TYOKO_PAIFU_SUFFIX.length()));
+                if (line.startsWith(TYOKO_PAIFU_PREFIX)) {
+                    JSONObject gameJson;
+                    if (line.endsWith(TYOKO_PAIFU_SUFFIX)) {
+                        gameJson = JSONObject.parseObject(
+                            line.substring(TYOKO_PAIFU_PREFIX.length(), line.length() - TYOKO_PAIFU_SUFFIX.length()));
+                    } else {
+                        gameJson = JSONObject.parseObject(
+                            line.substring(TYOKO_PAIFU_PREFIX.length()));
+                    }
                     if (!titleStatus) {
                         titleStatus = true;
                         String[] title = gameJson.getJSONArray("title").toArray(new String[0]);
@@ -52,7 +58,6 @@ public class TyokoUtil {
                         tenhouPaifuBuilder.title(title);
                         tenhouPaifuBuilder.name(name);
                         TenhouRule tenhouRule = new TenhouRule();
-                        tenhouRule.setDisp("");
                         tenhouRule.setAka(gameJson.getJSONObject("rule").getInteger("aka"));
                         tenhouPaifuBuilder.rule(tenhouRule);
                     }

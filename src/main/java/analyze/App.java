@@ -12,11 +12,16 @@ import java.util.Map;
 public class App {
 
     public static void main (String[] args) {
+
         List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
-                "L001_S001_0061_01A", "L001_S001_0070_01A");
+                "L001_S022_0001_01A", "L001_S022_0008_02B");
+//        List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
+//                "L001_S001_0001_01A", "L001_S019_0091_02A");
+//        List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
+//                "L001_S002_0001_03A", "L001_S002_0001_03A");
         Map<String, TenhouPaifu> tenhouPaifuMap = TenhouPaifuUtil.generateTenhouPaifuMap(officialGameInfoList);
 //        PaifuAnalyzer.fun1a(officialGameInfoList, tenhouPaifuMap);
-        PaifuAnalyzer.fun1b(officialGameInfoList, tenhouPaifuMap);
+        PaifuAnalyzer.fun1a(officialGameInfoList, tenhouPaifuMap);
 
 //        List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
 //                "L001_S001_0001_01A", "L001_S019_0091_02A");

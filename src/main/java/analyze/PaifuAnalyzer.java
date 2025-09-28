@@ -122,7 +122,6 @@ public class PaifuAnalyzer {
 
     // 与t-yoko牌谱比较时的临时打印
     private static void printGameForCompare(String fileName, OfficialGameInfo gameInfo, TenhouPaifu tenhouPaifu) {
-        tenhouPaifu.getRule().setDisp("");
         for(KyokuLog kyokuLog: tenhouPaifu.getLog()) {
             if (kyokuLog.getKyokuEndDetail().size()!=0) {
                 while(kyokuLog.getKyokuEndDetail().size() != 4) {

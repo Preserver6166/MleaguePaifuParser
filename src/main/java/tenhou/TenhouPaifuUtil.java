@@ -73,7 +73,8 @@ public class TenhouPaifuUtil {
         tenhouPaifuBuilder.name(gameInfo.getProNames());
 
         TenhouRule tenhouRule = new TenhouRule();
-        tenhouRule.setDisp(gameInfo.getGameName()); // 似乎没有必要填这个参数
+        // tenhouRule.setDisp(gameInfo.getGameName());
+        tenhouRule.setDisp(""); // disp与title功能重复，去除
         tenhouRule.setAka(1);
         tenhouPaifuBuilder.rule(tenhouRule);
 
@@ -798,7 +799,7 @@ public class TenhouPaifuUtil {
             /**
              * 校验摸到或打出的牌是否合法 TODO 目前仅检测摸牌
              */
-            int[] haipaiCounter = new int[54]; // 11-19, 21-29, 31-39, 51-53
+            int[] haipaiCounter = new int[54]; // 11-19, 21-29, 31-39, 41-47, 51-53
             doraInfo.forEach(dora -> haipaiCounter[dora]++);
             uraInfo.forEach(ura -> haipaiCounter[ura]++);
             for (int i=0; i<haipaiInfo.length; i++) {

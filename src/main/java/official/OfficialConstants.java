@@ -12,54 +12,27 @@ public class OfficialConstants {
     public static final String FILENAME_PREFIX_V2 = PATH + "/Documents/Mleague数据/doc_official_data_v2/";
 
     /**
-     * 官方牌谱文件名模版
+     * 官方牌谱文件名称列表
      */
-    public static final String URL_PATTERN_2018_REGULAR = "L001_S001_%s_0%dA";
-    public static final String URL_PATTERN_2018_FINAL = "L001_S002_%s_0%dA";
-    public static final String URL_PATTERN_2019_REGULAR = "L001_S003_%s_0%dA";
-    public static final String URL_PATTERN_2019_SEMI = "L001_S004_%s_0%dA";
-    public static final String URL_PATTERN_2019_FINAL = "L001_S005_%s_0%dA";
-    public static final String URL_PATTERN_2020_REGULAR = "L001_S007_%s_0%dA";
-    public static final String URL_PATTERN_2020_SEMI = "L001_S008_%s_0%dA";
-    public static final String URL_PATTERN_2020_FINAL = "L001_S009_%s_0%dA";
-    public static final String URL_PATTERN_2021_REGULAR = "L001_S010_%s_0%dA";
-    public static final String URL_PATTERN_2021_SEMI = "L001_S011_%s_0%dA";
-    public static final String URL_PATTERN_2021_FINAL = "L001_S012_%s_0%dA";
-    public static final String URL_PATTERN_2022_REGULAR = "L001_S013_%s_0%dA";
-    public static final String URL_PATTERN_2022_SEMI = "L001_S014_%s_0%dA";
-    public static final String URL_PATTERN_2022_FINAL = "L001_S015_%s_0%dA";
-    public static final String URL_PATTERN_2023_REGULAR = "L001_S016_%s_0%dA";
-    public static final String URL_PATTERN_2023_SEMI = "L001_S017_%s_0%dA";
-    public static final String URL_PATTERN_2023_FINAL = "L001_S018_%s_0%dA";
-    public static final String URL_PATTERN_2024_REGULAR = "L001_S019_%s_0%dA";
-    public static final String URL_PATTERN_2024_SEMI = "L001_S020_%s_0%dA";
-    public static final String URL_PATTERN_2024_FINAL = "L001_S021_%s_0%dA";
+    public static final String SCHEDULE_FILE = "src/main/resources/schedule";
 
     /**
-     * SEASONS 赛季顺序
-     * SEASON_NAMES 赛季名称
-     * GAMENUMS 赛季比赛场数
+     * 官方牌谱赛季映射关系表
      */
-    public static final String[] SEASONS = {
-            URL_PATTERN_2018_REGULAR, URL_PATTERN_2018_FINAL,
-            URL_PATTERN_2019_REGULAR, URL_PATTERN_2019_SEMI, URL_PATTERN_2019_FINAL,
-            URL_PATTERN_2020_REGULAR, URL_PATTERN_2020_SEMI, URL_PATTERN_2020_FINAL,
-            URL_PATTERN_2021_REGULAR, URL_PATTERN_2021_SEMI, URL_PATTERN_2021_FINAL,
-            URL_PATTERN_2022_REGULAR, URL_PATTERN_2022_SEMI, URL_PATTERN_2022_FINAL,
-            URL_PATTERN_2023_REGULAR, URL_PATTERN_2023_SEMI, URL_PATTERN_2023_FINAL,
-            URL_PATTERN_2024_REGULAR, URL_PATTERN_2024_SEMI, URL_PATTERN_2024_FINAL
-    };
+    public static final Map<String, String> SEASON_MAP = new LinkedHashMap<>() {{
+        put("S001", "18-19赛季 常规赛"); put("S002", "18-19赛季 决赛");
+        put("S003", "19-20赛季 常规赛"); put("S004", "19-20赛季 半决赛"); put("S005", "19-20赛季 半决赛");
+        put("S007", "20-21赛季 常规赛"); put("S008", "20-21赛季 半决赛"); put("S009", "20-21赛季 半决赛");
+        put("S010", "21-22赛季 常规赛"); put("S011", "21-22赛季 半决赛"); put("S012", "21-22赛季 半决赛");
+        put("S013", "22-23赛季 常规赛"); put("S014", "22-23赛季 半决赛"); put("S015", "22-23赛季 半决赛");
+        put("S016", "23-24赛季 常规赛"); put("S017", "23-24赛季 半决赛"); put("S018", "23-24赛季 半决赛");
+        put("S019", "24-25赛季 常规赛"); put("S020", "24-25赛季 半决赛"); put("S021", "24-25赛季 半决赛");
+        put("S022", "25-26赛季 常规赛"); put("S023", "25-26赛季 半决赛"); put("S024", "25-26赛季 半决赛");
+    }};
 
-    public static final String[] SEASON_NAMES = {
-            "18-19赛季 常规赛", "18-19赛季 决赛",
-            "19-20赛季 常规赛", "19-20赛季 半决赛", "19-20赛季 决赛",
-            "20-21赛季 常规赛", "20-21赛季 半决赛", "20-21赛季 决赛",
-            "21-22赛季 常规赛", "21-22赛季 半决赛", "21-22赛季 决赛",
-            "22-23赛季 常规赛", "22-23赛季 半决赛", "22-23赛季 决赛",
-            "23-24赛季 常规赛", "23-24赛季 半决赛", "23-24赛季 决赛",
-            "24-25赛季 常规赛", "24-25赛季 半决赛", "24-25赛季 决赛",
-    };
-
+    /**
+     * 各赛季的比赛场数
+     */
     public static int[] GAMENUMS = {
             140, 24, // 2018-2019赛季没有半决赛
             180, 24, 12,
@@ -67,7 +40,8 @@ public class OfficialConstants {
             180, 24, 12,
             188, 30, 16,
             216, 30, 16,
-            216, 30, 16
+            216, 30, 16,
+            240
     };
 
     /**

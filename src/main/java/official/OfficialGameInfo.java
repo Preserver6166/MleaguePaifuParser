@@ -14,7 +14,7 @@ import static official.ProInfo.PRO_INFO;
 public class OfficialGameInfo {
 
     /**
-     * 比赛索引象限信息
+     * 比赛索引信息
      */
     private String fileName;
     private int globalIndex; // 全局计算第几个本场
@@ -24,7 +24,7 @@ public class OfficialGameInfo {
     private String season; // 赛季名称
 
     /**
-     * 比赛时间象限信息
+     * 比赛时间信息
      */
     private String gameDate; // YYYY/mm/dd
     private String gameWeekDay; // 日月火水木金土
@@ -33,11 +33,16 @@ public class OfficialGameInfo {
     private int interval; // 单位为分钟
 
     /**
-     * 比赛结果象限信息
+     * 比赛结果信息
      */
     private String[] proNames;
     private BigDecimal[] proPoints; // 成绩
     private int[] proRanks; // 顺位
+
+    /**
+     * 比赛牌谱信息
+     */
+    private String nagaLink;
 
     // other info
     private List<OfficialPaifuLog> officialPaifuLogList;

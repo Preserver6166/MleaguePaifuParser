@@ -14,7 +14,7 @@ public class App {
     public static void main (String[] args) {
 
         List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
-                "L001_S022_0001_01A", "L001_S022_0008_02B");
+                "L001_S022_0018_01A", "L001_S022_0018_02A");
 //        List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(
 //                "L001_S001_0001_01A", "L001_S019_0091_02A");
 //        List<OfficialGameInfo> officialGameInfoList = OfficialPaifuUtil.generateOfficialGameInfoList(

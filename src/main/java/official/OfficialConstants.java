@@ -14,7 +14,11 @@ public class OfficialConstants {
     /**
      * 官方牌谱文件名称列表
      */
-    public static final String SCHEDULE_FILE = "src/main/resources/schedule";
+    public static final String SCHEDULE_FILE_PATH = "src/main/resources/schedule/";
+    public static final String[] SCHEDULE_FILE_NAMES = {
+            "S18-19", "S19-20", "S20-21", "S21-22", "S22-23",
+            "S23-24", "S24-25", "S25-26"
+    };
 
     /**
      * 官方牌谱赛季映射关系表
@@ -79,7 +83,10 @@ public class OfficialConstants {
     /**
      * NAGA评分模版
      */
-//    public static final String NAGA_PATTERN_1 = "/** NAGA度：%s 80.0; %s 80.0; %s 80.0; %s 80.0 */";
+    public static final String NAGA_DEFAULT_LINK =
+            "https://naga.dmv.nico/htmls/053227e0e24c174441bd302c0f0f1680063eadbc24d0888148191b2f1673b517v2_2_2.html?tw=0";
+
+    //    public static final String NAGA_PATTERN_1 = "/** NAGA度：%s 80.0; %s 80.0; %s 80.0; %s 80.0 */";
 //    public static final String NAGA_PATTERN_2 = "/** 一致率：%s 70.0%%; %s 70.0%%; %s 70.0%%; %s 70.0%% */";
 //    public static final String NAGA_PATTERN_3 = "/** 恶手率：%s 5.0%%; %s 5.0%%; %s 5.0%%; %s 5.0%% */";
     public static final String NAGA_PATTERN_NEW = "/** %s(%s): NAGA度80.0; 一致率70.0%%; 恶手率5.0%% */";

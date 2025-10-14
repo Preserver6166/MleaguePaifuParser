@@ -8,6 +8,7 @@ import official.OfficialPaifuUtil;
 import official.ProInfo;
 import tenhou.KyokuLog;
 import tenhou.TenhouPaifu;
+import util.TyokoUtil;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -50,7 +51,7 @@ public class PaifuAnalyzer {
      */
     public static void fun1a(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
 
-        if (officialGameInfoList.size() > 30) {
+        if (officialGameInfoList.size() > 50) {
             officialGameInfoList.forEach(officialGameInfo -> {
                 System.out.println(officialGameInfo.getFileName());
             });
@@ -75,11 +76,17 @@ public class PaifuAnalyzer {
             });
             return;
         }
+
         officialGameInfoList.forEach(officialGameInfo -> {
             printGameForCompare(officialGameInfo.getFileName(), officialGameInfo,
                     tenhouPaifuMap.get(officialGameInfo.getFileName()));
         });
-        System.out.println("GAME_INFOS size:" + officialGameInfoList.size());
+        System.out.println();
+
+        officialGameInfoList.forEach(officialGameInfo -> {
+            TenhouPaifu paifu = TyokoUtil.readPaifuFromFile(officialGameInfo.getFileName());
+            System.out.println(JSONObject.toJSONString(paifu));
+        });
 
     }
 
@@ -93,7 +100,7 @@ public class PaifuAnalyzer {
         System.out.println(gameInfo.getGameResult());
         System.out.println();
         System.out.println("/** NAGA牌谱及分析详情：");
-        System.out.println("https://naga.dmv.nico/htmls/053227e0e24c174441bd302c0f0f1680063eadbc24d0888148191b2f1673b517v2_2_2.html?tw=0");
+        System.out.println(gameInfo.getNagaLink());
         System.out.println("*/");
         System.out.println(String.format(NAGA_PATTERN_NEW,
                 PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
@@ -132,7 +139,9 @@ public class PaifuAnalyzer {
         System.out.println(JSONObject.toJSONString(tenhouPaifu));
     }
 
-    // 每个赛季 伊达上家和下家的顺位和pt
+    /**
+     * 每个赛季 伊达上家和下家的顺位和pt
+     */
     public static void funUnLabeled(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         Map<String, Integer> season_gameCount = new LinkedHashMap<>();
         Map<String, Integer> season_rank1 = new LinkedHashMap<>(); // 上家
@@ -185,6 +194,9 @@ public class PaifuAnalyzer {
         });
     }
 
+    /**
+     * 大洋化学：统计牌洗没洗开
+     */
     public static void fun46_1(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         int kyokuCount = 0;// 0-1, 2-3, 4-5, 6-7
 //        int[] pairCount = new int[4];
@@ -226,7 +238,7 @@ public class PaifuAnalyzer {
     }
 
     /**
-     * 统计当前局dora指示牌与上上局dora指示牌是否一致
+     * 大洋化学：统计当前局dora指示牌与上上局dora指示牌是否一致
      */
     public static void fun45_2(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         int sameCount = 0;
@@ -260,7 +272,7 @@ public class PaifuAnalyzer {
     }
 
     /**
-     * 统计每种dora指示牌的分布
+     * 大洋化学：统计每种dora指示牌的分布
      */
     public static void fun45_1(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         int[] doraCount = new int[53];
@@ -288,6 +300,9 @@ public class PaifuAnalyzer {
         }
     }
 
+    /**
+     * 狭义1番，广义1番，2番以下
+     */
     public static void fun43(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
         Map<String, Integer> pro_kyokuCount = new LinkedHashMap<>();
         Map<String, Integer> pro_agariCount = new LinkedHashMap<>();
@@ -337,6 +352,9 @@ public class PaifuAnalyzer {
         });
     }
 
+    /**
+     * 新狗放铳高宫全记录
+     */
     public static void fun42(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
 
         String agariProName = "高宮まり";
@@ -584,7 +602,7 @@ public class PaifuAnalyzer {
         Map<String, BigDecimal> proB_score = new LinkedHashMap<>();
         Map<String, Integer> proComb_num = new LinkedHashMap<>();
         for (OfficialGameInfo gameInfo : officialGameInfoList) {
-//            if (gameInfo.getFileName().contains("S001") ||
+//            if (gameInfo.getFileName().contains("S18-19") ||
 //                    gameInfo.getFileName().contains("S003") ||
 //                    gameInfo.getFileName().contains("S007") ||
 //                    gameInfo.getFileName().contains("S010") ||
@@ -729,7 +747,7 @@ public class PaifuAnalyzer {
                 String[] params = scanner.nextLine().split(" ");
                 String rawSeason = params[0].split("_")[1];
                 String season;
-                if (rawSeason.equals("S001") || rawSeason.equals("S002")) {
+                if (rawSeason.equals("S18-19") || rawSeason.equals("S002")) {
                     season = "18-19赛季";
                 } else if (rawSeason.equals("S003") || rawSeason.equals("S004") || rawSeason.equals("S005")) {
                     season = "19-20赛季";

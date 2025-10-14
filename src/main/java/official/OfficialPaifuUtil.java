@@ -20,29 +20,39 @@ public class OfficialPaifuUtil {
     public static List<OfficialGameInfo> generateOfficialGameInfoList(
             String startGame, String endGame) {
         List<String[]> officialFileInfoList = new ArrayList<>();
-        try {
-            Scanner scanner = new Scanner(new File(SCHEDULE_FILE));
-            while (scanner.hasNextLine()) {
-                String[] officialFileInfo = scanner.nextLine().split("\t");
-                String fileName = officialFileInfo[0];
-                if (fileName.compareTo(startGame) >= 0) {
-                    if (fileName.compareTo(endGame) <= 0) {
-                        assert fileName.length() == 18;
-                        officialFileInfoList.add(officialFileInfo);
-                    } else {
-                        break;
+
+        /** TODO 此处的读取日程表逻辑可以根据读取范围进行优化 */
+        for (String scheduleFileName : SCHEDULE_FILE_NAMES) {
+            try {
+                Scanner scanner = new Scanner(new File(SCHEDULE_FILE_PATH + scheduleFileName));
+                while (scanner.hasNextLine()) {
+                    String[] officialFileInfo = scanner.nextLine().split("\t");
+                    String fileName = officialFileInfo[1];
+                    if (fileName.compareTo(startGame) >= 0) {
+                        if (fileName.compareTo(endGame) <= 0) {
+                            assert fileName.length() == 18;
+                            officialFileInfoList.add(officialFileInfo);
+                        } else {
+                            break;
+                        }
                     }
                 }
+                scanner.close();
+            } catch (FileNotFoundException ex) {
+                System.out.println("Cannot find schedule file");
             }
-            scanner.close();
-        } catch (FileNotFoundException ex) {
-            System.out.println("Cannot find schedule file");
         }
 
         List<OfficialGameInfo> officialGameInfoList = new ArrayList<>();
         for (String[] officialFileInfo: officialFileInfoList) {
-            String fileName = officialFileInfo[0];
-            String dayInfo = officialFileInfo[1];
+            String fileName = officialFileInfo[1];
+            String dayInfo = officialFileInfo[0];
+            String nagaLink;
+            if (officialFileInfo.length == 2 || officialFileInfo[2].length() == 0) {
+                nagaLink = NAGA_DEFAULT_LINK;
+            } else {
+                nagaLink = officialFileInfo[2];
+            }
             File file = new File(FILENAME_PREFIX_V2 + fileName);
             if (file.exists()) {
                 try {
@@ -52,6 +62,7 @@ public class OfficialPaifuUtil {
                     officialGameInfoBuilder.dayIndex(dayInfo.charAt(12) - 48);
                     // example: L001_S022_0008_02A
                     officialGameInfoBuilder.season(SEASON_MAP.get(fileName.split("_")[1]));
+                    officialGameInfoBuilder.nagaLink(nagaLink);
                     Scanner scanner = new Scanner(file);
                     while(scanner.hasNextLine()) {
                         String line = scanner.nextLine();

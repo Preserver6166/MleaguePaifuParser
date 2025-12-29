@@ -47,7 +47,7 @@ public class PaifuAnalyzer {
 //    });
 
     /**
-     * 输出比赛信息
+     * 输出比赛信息（B站）
      */
     public static void fun1a(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
 
@@ -58,7 +58,7 @@ public class PaifuAnalyzer {
             return;
         }
         officialGameInfoList.forEach(officialGameInfo -> {
-            printGame(officialGameInfo.getFileName(), officialGameInfo,
+            printGameForBsite(officialGameInfo.getFileName(), officialGameInfo,
                     tenhouPaifuMap.get(officialGameInfo.getFileName()));
         });
         System.out.println("GAME_INFOS size:" + officialGameInfoList.size());
@@ -91,10 +91,29 @@ public class PaifuAnalyzer {
     }
 
     /**
+     * 输出比赛信息（知乎专用）
+     */
+    public static void fun1c(List<OfficialGameInfo> officialGameInfoList, Map<String, TenhouPaifu> tenhouPaifuMap) {
+
+        if (officialGameInfoList.size() > 50) {
+            officialGameInfoList.forEach(officialGameInfo -> {
+                System.out.println(officialGameInfo.getFileName());
+            });
+            return;
+        }
+        officialGameInfoList.forEach(officialGameInfo -> {
+            printGameForZsite(officialGameInfo.getFileName(), officialGameInfo,
+                    tenhouPaifuMap.get(officialGameInfo.getFileName()));
+        });
+        System.out.println("GAME_INFOS size:" + officialGameInfoList.size());
+
+    }
+
+    /**
      * 2019/10/17 第1試合 佐々木寿人 vs 小林剛 vs 鈴木たろう vs 黒沢咲
      * 黒沢咲 +57.4pt; 小林剛 +16.9pt; 佐々木寿人 -25.3pt; 鈴木たろう -49.0pt
      */
-    private static void printGame(String fileName, OfficialGameInfo gameInfo, TenhouPaifu tenhouPaifu) {
+    private static void printGameForBsite(String fileName, OfficialGameInfo gameInfo, TenhouPaifu tenhouPaifu) {
         System.out.println("++++++++" + fileName + "++++++++");
         System.out.println(gameInfo.getGameBrief());
         System.out.println(gameInfo.getGameResult());
@@ -137,6 +156,31 @@ public class PaifuAnalyzer {
             }
         }
         System.out.println(JSONObject.toJSONString(tenhouPaifu));
+    }
+
+    /**
+     * 知乎专栏模版
+     */
+    private static void printGameForZsite(String fileName, OfficialGameInfo gameInfo, TenhouPaifu tenhouPaifu) {
+        System.out.println("++++++++" + fileName + "++++++++");
+        System.out.println(gameInfo.getGameBrief());
+        System.out.println(gameInfo.getGameResult());
+        System.out.println();
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[0]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[0]).getNagaStyle()));
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[1]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[1]).getNagaStyle()));
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[2]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[2]).getNagaStyle()));
+        System.out.println(String.format(NAGA_PATTERN_NEW,
+                PRO_INFO.get(gameInfo.getProNames()[3]).getProNameBrief(),
+                PRO_INFO.get(gameInfo.getProNames()[3]).getNagaStyle()));
+        System.out.println("NAGA牌谱链接");
+        System.out.println(gameInfo.getNagaLink());
+        System.out.println();
     }
 
     /**

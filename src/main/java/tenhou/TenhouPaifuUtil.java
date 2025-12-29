@@ -310,11 +310,11 @@ public class TenhouPaifuUtil {
                         int targetPaiName = PAI_NAME_MAPPING.get(args[2]);
                         String kanRecord = convertPonRecordIfPossible(ponRecordList, targetPaiName);
                         if (kanRecord != null) { // 加杠
-                            if (targetPaiName >= 51 && targetPaiName <=53) {
-                                System.out.println(gameInfo.getFileName() + "\t" +
-                                        kyokuLog.getKyokuStartInfo()[0] + "\t" +
-                                        kyokuLog.getKyokuStartInfo()[1] + "\t 存在红5加杠");
-                            }
+//                            if (targetPaiName >= 51 && targetPaiName <=53) {
+//                                System.out.println(gameInfo.getFileName() + "\t" +
+//                                        kyokuLog.getKyokuStartInfo()[0] + "\t" +
+//                                        kyokuLog.getKyokuStartInfo()[1] + "\t 存在红5加杠");
+//                            }
                             kyokuLog.appendSutehaiInfo(proIndex, kanRecord);
                             lastSutehaiProIndex = proIndex;
                         } else { // 明杠之后, 要在sutehai里加个0
